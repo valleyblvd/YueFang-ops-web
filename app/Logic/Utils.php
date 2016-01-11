@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Tools;
+namespace App\Logic;
+
 
 class Utils
 {

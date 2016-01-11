@@ -2,21 +2,32 @@
 
 @section('content')
     <h2>添加Banner</h2>
-    <a href="/banners">返回列表</a>
-    <form method="POST" action="/banners">
+    <a href="/launches">返回列表</a>
+    <form method="POST" action="/launches">
         {!! csrf_field() !!}
-        @foreach($formats as $format)
-            <div id="{{$format['id']}}">
-                <input type="checkbox" class="format" name="formats[]" value="{{$format['id']}}"/>{{$format['name']}}
-                <div class="imgList {{$format['id']}}">
-                    <div class="clearfix" style="clear:both;"></div>
+        <div>
+            <select name="type" onchange="changeType(this)">
+                <option value="0" selected>launch screen image</option>
+                <option value="1">launch ad image</option>
+                <option value="2">guide image</option>
+                <option value="3">home page html</option>
+            </select>
+        </div>
+        <div id="formatWrapper">
+            @foreach($formats as $format)
+                <div id="{{$format['id']}}">
+                    <input type="checkbox" class="format" name="formats[]"
+                           value="{{$format['id']}}"/>{{$format['name']}}
+                    <div class="imgList {{$format['id']}}">
+                        <div class="clearfix" style="clear:both;"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <button type="button" class="uploadBannerBtn" onclick="uploadBanner('{{$format['id']}}')">上传图片
+                    </button>
                 </div>
-                <div style="clear:both;"></div>
-                <button type="button" class="uploadBannerBtn" onclick="uploadBanner('{{$format['id']}}')">上传图片
-                </button>
-            </div>
-            <hr>
-        @endforeach
+                <hr>
+            @endforeach
+        </div>
         <input type="text" name="url" placeholder="url"/>
         <input type="text" name="start_date" placeholder="开始日期(必填)"/>
         <input type="text" name="end_date" placeholder="结束日期(必填)"/>
@@ -59,6 +70,16 @@
 
         var deleteImg = function (delBtn) {
             $(delBtn).parents('.imgWrapper').remove();
+        };
+
+        var changeType = function (select) {
+            if ($(select).val() == 3) {
+                $('#formatWrapper').hide();
+                $('input[name=url]').attr('placeholder', 'url(必填)');
+            } else {
+                $('#formatWrapper').show();
+                $('input[name=url]').attr('placeholder', 'url');
+            }
         };
     </script>
 @endsection

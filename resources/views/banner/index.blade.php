@@ -10,6 +10,7 @@
                 <td>{{$banner->ext}}</td>
                 <td>{{$banner->format}}</td>
                 <td>{{$banner->url}}</td>
+                <td>{{$banner->num}}</td>
                 <td>{{$banner->start_date}}</td>
                 <td>{{$banner->end_date}}</td>
                 <td>{{$banner->active?'已启用':'已禁用'}}</td>

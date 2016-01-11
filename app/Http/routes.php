@@ -22,14 +22,6 @@ Route::resource('clients','ClientController');
 Route::resource('properties','PropertyController');
 
 
-Route::get('res/banners','ResController@indexBanner');
-Route::get('res/banners/create','ResController@createBanner');
-Route::get('res/banners/{id}','ResController@showBanner');
-Route::post('res/banners','ResController@storeBanner');
-Route::get('res/banners/{id}/edit','ResController@editBanner');
-Route::put('res/banners/{id}','ResController@updateBanner');
-Route::delete('res/banners/{id}','ResController@deleteBanner');
-Route::post('res/file','ResController@uploadFile');
-
 Route::resource('banners','BannerController');
+Route::resource('launches','LaunchController');
 Route::resource('files','FileController');

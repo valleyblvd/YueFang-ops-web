@@ -25,7 +25,7 @@
                     <div class="clearfix" style="clear:both;"></div>
                 </div>
                 <div style="clear:both;"></div>
-                <button type="button" class="uploadBannerBtn" onclick="uploadBanner('{{$format['id']}}')">上传Banner
+                <button type="button" class="uploadBannerBtn" onclick="uploadBanner('{{$format['id']}}')">上传图片
                 </button>
             </div>
             <hr>
