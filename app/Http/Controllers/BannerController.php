@@ -8,35 +8,38 @@ use App\Models\ResourceVer;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use App\Tools\Utils;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 
-class ResController extends Controller
+class BannerController extends Controller
 {
-    public function __construct()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
-        $this->middleware('auth');
+        return view('banner.index', ['banners' => BannerResBiz::getAll()]);
     }
 
-    public function indexBanner()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
-        return view('res.banner.index', ['banners' => BannerResBiz::getAll()]);
+        return view('banner.create', ['formats' => BannerResBiz::getFormats()]);
     }
 
-    public function showBanner($id)
-    {
-        $banner = BannerResBiz::getOne($id);
-        if ($banner == null)
-            return view('errors.404');
-        return view('res.banner.show', ['banner' => $banner]);
-    }
-
-    public function createBanner()
-    {
-        return view('res.banner.create', ['formats' => BannerResBiz::getFormats()]);
-    }
-
-    public function storeBanner(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
     {
         $this->validate($request, [
             'formats' => 'required',
@@ -59,9 +62,9 @@ class ResController extends Controller
         foreach ($formats as $format) {
             $banners = $request->input($format);//banner相对路径数组
             if (count($banners) == 0)
-                return view('res.banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('您还没有上传图片！');
+                return view('banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('您还没有上传图片！');
             if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return view('res.banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('图片数量不一致！');
+                return view('banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('图片数量不一致！');
             }
             $bannerCount = count($banners);
             $bannerRes->num = count($banners);
@@ -77,18 +80,45 @@ class ResController extends Controller
             $ver->ver = time();
             $ver->save();
         }
-        return Redirect::to('res/banners');
+        return Redirect::to('banners');
     }
 
-    public function editBanner($id)
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $banner = BannerResBiz::getOne($id);
+        if ($banner == null)
+            return view('errors.404');
+        return view('banner.show', ['banner' => $banner]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
     {
         $bannerRes = BannerResBiz::getOne($id);
         if ($bannerRes == null)
             return view('errors.404');
-        return view('res.banner.edit', ['id' => $id, 'formats' => BannerResBiz::getFormats(), 'banner' => $bannerRes]);
+        return view('banner.edit', ['id' => $id, 'formats' => BannerResBiz::getFormats(), 'banner' => $bannerRes]);
     }
 
-    public function updateBanner($id, Request $request)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
             'formats' => 'required',
@@ -131,24 +161,18 @@ class ResController extends Controller
             $ver->ver = time();
             $ver->save();
         }
-        return Redirect::to('res/banners/');
+        return Redirect::to('banners/');
     }
 
-    public function deleteBanner($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
     {
         BannerRes::destroy($id);
-        return Redirect::to('res/banners');
-    }
-
-    public function uploadFile(Request $request)
-    {
-        $file = $request->file('file');
-        $ext = $file->getClientOriginalExtension();
-        $relativePath = 'images/' . Utils::newGuid() . '.' . $ext;
-        $file->move(env('UPLOAD_PATH_PREFIX') . 'images/', $relativePath);
-        if ($request->ajax()) {
-            return response()->json(['relativePath' => $relativePath, 'url' => env('UPLOAD_URL') . $relativePath]);
-        }
-        return '上传成功！';
+        return Redirect::to('banners');
     }
 }

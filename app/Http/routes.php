@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return Redirect::to('res/banners');
+    return Redirect::to('banners');
 });
 
 Route::get('login','Auth\AuthController@getLogin');
@@ -30,3 +30,6 @@ Route::get('res/banners/{id}/edit','ResController@editBanner');
 Route::put('res/banners/{id}','ResController@updateBanner');
 Route::delete('res/banners/{id}','ResController@deleteBanner');
 Route::post('res/file','ResController@uploadFile');
+
+Route::resource('banners','BannerController');
+Route::resource('files','FileController');

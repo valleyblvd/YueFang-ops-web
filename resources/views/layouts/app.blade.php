@@ -14,7 +14,7 @@
                 <dt>静态资源</dt>
                 <dd><a href="">开机图片管理</a></dd>
                 <dd><a href="">开机广告管理</a></dd>
-                <dd><a href="/res/banners">Banner广告管理</a></dd>
+                <dd><a href="/banners">Banner广告管理</a></dd>
                 <dd><a href="">国际电话区号管理</a></dd>
                 <dt>用户</dt>
                 <dd><a href="">经纪人</a></dd>
@@ -25,8 +25,8 @@
         <div style="float:left;padding:10px;">
             @yield('content')
         </div>
-        <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
-        <script src="http://malsup.github.com/jquery.form.js"></script>
+        <script src="/lib/jquery-1.9.1.min.js"></script>
+        <script src="/lib/jquery.form.js"></script>
         <script src="/lib/jquery.dragsort-0.5.2.min.js"></script>
         @yield('js')
     </body>

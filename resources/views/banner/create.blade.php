@@ -2,8 +2,8 @@
 
 @section('content')
     <h2>添加Banner</h2>
-    <a href="/res/banners">返回列表</a>
-    <form method="POST" action="/res/banners">
+    <a href="/banners">返回列表</a>
+    <form method="POST" action="/banners">
         {!! csrf_field() !!}
         @foreach($formats as $format)
             <div id="{{$format['id']}}">
@@ -24,7 +24,7 @@
         <button type="submit">保存</button>
     </form>
     @include('partial._error')
-    <form id="uploadBannerForm" method="POST" action="/res/file" enctype="multipart/form-data" style="display:none;">
+    <form id="uploadBannerForm" method="POST" action="/files" enctype="multipart/form-data" style="display:none;">
         {!! csrf_field() !!}
         <input type="file" name="file" onchange="submitUploadForm()"/>
     </form>
