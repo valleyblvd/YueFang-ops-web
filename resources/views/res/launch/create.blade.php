@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <h2>添加Banner</h2>
-    <a href="/launches">返回列表</a>
-    <form method="POST" action="/launches">
+    <h2>添加开机启动资源</h2>
+    <a href="/res/launch">返回列表</a>
+    <form method="POST" action="/res/launch">
         {!! csrf_field() !!}
         <div>
             <select name="type" onchange="changeType(this)">

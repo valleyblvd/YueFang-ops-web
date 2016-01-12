@@ -3,33 +3,38 @@
 namespace App\Logic;
 
 
-use App\Models\BannerRes;
+use App\Models\PropertyCustomize;
 
-class BannerResBiz
+class PropertyCustBiz
 {
     public static function getAll()
     {
-        return BannerRes::all();
+        return PropertyCustomize::all();
     }
 
     public static function getOne($id)
     {
-        $record = BannerRes::find($id);
+        $record = PropertyCustomize::find($id);
         if ($record == null)
             return null;
 
-        $banner = new \stdClass();
-        $banner->id = $record->id;
-        $banner->url = $record->url;
-        $banner->start_date = $record->start_date;
-        $banner->end_date = $record->end_date;
-        $banner->active=$record->active;
-        $banner->resources = [];
-        $banner->formats = [];
+        $model = new \stdClass();
+        $model->id = $record->id;
+        $model->sub_cat_id = $record->sub_cat_id;
+        $model->title = $record->title;
+        $model->lat = $record->lat;
+        $model->lng = $record->lng;
+        $model->address=$record->address;
+        $model->city=$record->city;
+        $model->state=$record->state;
+        $model->zipcode=$record->zipcode;
+        $model->listingID=$record->listingID;
+        $model->resources = [];
+        $model->formats = [];
 
         $formats = explode(',', $record->format);
         foreach ($formats as $format) {
-            $banner->formats[]=$format;
+            $model->formats[] = $format;
 
             $resource = new \stdClass();
             $resource->format = $format;
@@ -41,8 +46,8 @@ class BannerResBiz
                 $img->src = env('UPLOAD_URL') . $relativePath;
                 $resource->imgs[] = $img;
             }
-            $banner->resources[] = $resource;
+            $model->resources[] = $resource;
         }
-        return $banner;
+        return $model;
     }
 }

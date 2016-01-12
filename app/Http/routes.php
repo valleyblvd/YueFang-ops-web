@@ -12,16 +12,16 @@
 */
 
 Route::get('/', function () {
-    return Redirect::to('banners');
+    return Redirect::to('properties/customize');
 });
 
 Route::get('login','Auth\AuthController@getLogin');
 Route::post('login','Auth\AuthController@postLogin');
 
 Route::resource('clients','ClientController');
-Route::resource('properties','PropertyController');
 
-
-Route::resource('banners','BannerController');
-Route::resource('launches','LaunchController');
+Route::resource('properties/customize','Property\CustomizeController');
+Route::resource('properties/ext','Property\ExtController');
+Route::resource('res/banner','Res\BannerController');
+Route::resource('res/launch','Res\LaunchController');
 Route::resource('files','FileController');

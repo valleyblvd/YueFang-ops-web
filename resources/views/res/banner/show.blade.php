@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <a href="/banners">返回列表</a>
-    <a href="/banners/{{$banner->id}}/edit">编辑</a>
+    <a href="/res/banner">返回列表</a>
+    <a href="/res/banner/{{$banner->id}}/edit">编辑</a>
     @foreach($banner->resources as $resource)
         <div>{{$resource->format}}</div>
         @foreach($resource->imgs as $img)

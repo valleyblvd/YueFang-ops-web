@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Res;
 
 use App\Logic\LaunchResBiz;
-use App\Logic\ResUtils;
+use App\Logic\Utils;
 use App\Models\LaunchRes;
 use App\Models\ResourceVer;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 
 class LaunchController extends Controller
@@ -20,7 +21,7 @@ class LaunchController extends Controller
      */
     public function index()
     {
-        return view('launch.index', ['records' => LaunchResBiz::getAll()]);
+        return view('res.launch.index', ['records' => LaunchResBiz::getAll()]);
     }
 
     /**
@@ -30,7 +31,7 @@ class LaunchController extends Controller
      */
     public function create()
     {
-        return view('launch.create', ['formats' => ResUtils::getFormats()]);
+        return view('res.launch.create', ['formats' => Utils::getResFormats()]);
     }
 
     /**
@@ -68,7 +69,7 @@ class LaunchController extends Controller
                 $ver->save();
             }
         } else {
-            $relativePathPrefix = ResUtils::getLaunchImgPath($type);
+            $relativePathPrefix = Utils::getLaunchImgPath($type);
             $bannerCount = -1;
             $record->img = $relativePathPrefix;
             $formats = $request->input('formats');
@@ -76,9 +77,9 @@ class LaunchController extends Controller
             foreach ($formats as $format) {
                 $imgs = $request->input($format);//img相对路径数组
                 if (count($imgs) == 0)
-                    return view('banner.create', ['formats' => ResUtils::getFormats()])->withErrors('您还没有上传图片！');
+                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
                 if ($bannerCount > -1 && count($imgs) != $bannerCount) {
-                    return view('banner.create', ['formats' => ResUtils::getFormats()])->withErrors('图片数量不一致！');
+                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
                 }
                 $bannerCount = count($imgs);
                 $record->num = count($imgs);
@@ -95,7 +96,7 @@ class LaunchController extends Controller
                 $ver->save();
             }
         }
-        return Redirect::to('launches');
+        return Redirect::to('res/launch');
     }
 
     /**
@@ -109,7 +110,7 @@ class LaunchController extends Controller
         $record = LaunchResBiz::getOne($id);
         if ($record == null)
             return view('errors.404');
-        return view('launch.show', ['record' => $record]);
+        return view('res.launch.show', ['record' => $record]);
     }
 
     /**
@@ -123,7 +124,7 @@ class LaunchController extends Controller
         $record = LaunchResBiz::getOne($id);
         if ($record == null)
             return view('errors.404');
-        return view('launch.edit', ['id' => $id, 'formats' => ResUtils::getFormats(), 'record' => $record]);
+        return view('res.launch.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'record' => $record]);
     }
 
     /**
@@ -161,7 +162,7 @@ class LaunchController extends Controller
                 $ver->save();
             }
         }else{
-            $relativePathPrefix = ResUtils::getLaunchImgPath($record->type);
+            $relativePathPrefix = Utils::getLaunchImgPath($record->type);
             $bannerCount = -1;
             $record->img = $relativePathPrefix;
             $formats = $request->input('formats');
@@ -169,9 +170,9 @@ class LaunchController extends Controller
             foreach ($formats as $format) {
                 $banners = $request->input($format);//banner相对路径数组
                 if (count($banners) == 0)
-                    return view('res.banner.create', ['formats' => ResUtils::getFormats()])->withErrors('您还没有上传图片！');
+                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
                 if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                    return view('res.banner.create', ['formats' => ResUtils::getFormats()])->withErrors('图片数量不一致！');
+                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
                 }
                 $bannerCount = count($banners);
                 $record->num = count($banners);
@@ -189,7 +190,7 @@ class LaunchController extends Controller
             }
         }
 
-        return Redirect::to('launches');
+        return Redirect::to('res/launch');
     }
 
     /**
@@ -201,6 +202,6 @@ class LaunchController extends Controller
     public function destroy($id)
     {
         LaunchRes::destroy($id);
-        return Redirect::to('launches');
+        return Redirect::to('res/launch');
     }
 }

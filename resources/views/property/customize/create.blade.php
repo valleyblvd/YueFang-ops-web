@@ -1,10 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <h2>添加Banner</h2>
-    <a href="/banners">返回列表</a>
-    <form method="POST" action="/banners">
+    <h2>添加房源标注</h2>
+    <a href="/properties/customize">返回列表</a>
+    <form method="POST" action="/properties/customize">
         {!! csrf_field() !!}
+        <select name="sub_cat_id">
+            @foreach($cats as $cat)
+                <optgroup label="{{$cat->name}}"></optgroup>
+                @foreach($cat->subCats as $subCat)
+                    <option value="{{$subCat->id}}">{{$subCat->name}}</option>
+                @endforeach
+            @endforeach
+        </select>
         @foreach($formats as $format)
             <div id="{{$format['id']}}">
                 <input type="checkbox" class="format" name="formats[]" value="{{$format['id']}}"/>{{$format['name']}}
@@ -17,10 +25,14 @@
             </div>
             <hr>
         @endforeach
-        <input type="text" name="url" placeholder="url"/>
-        <input type="text" name="start_date" placeholder="开始日期(必填)"/>
-        <input type="text" name="end_date" placeholder="结束日期(必填)"/>
-        <input type="checkbox" name="active"/>启用
+        <input type="text" name="listingID" placeholder="listingID"/>
+        <input type="text" name="title" placeholder="标题"/>
+        <input type="text" name="lat" placeholder="lat"/>
+        <input type="text" name="lng" placeholder="lng"/><br/><br/>
+        <input type="text" name="address" placeholder="地址"/>
+        <input type="text" name="city" placeholder="城市"/>
+        <input type="text" name="state" placeholder="州"/>
+        <input type="text" name="zipcode" placeholder="邮编"/>
         <button type="submit">保存</button>
     </form>
     @include('partial._error')

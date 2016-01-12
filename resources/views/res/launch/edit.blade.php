@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <h2>编辑Banner</h2>
-    <a href="/launches">返回列表</a>
-    <form method="POST" action="/launches/{{$id}}">
+    <h2>编辑开机启动资源</h2>
+    <a href="/res/launch">返回列表</a>
+    <form method="POST" action="/res/launch/{{$id}}">
         {!! csrf_field() !!}
         <input type="hidden" name="_method" value="PUT">
 

@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <a href="/launches">返回列表</a>
-    <a href="/launches/{{$record->id}}/edit">编辑</a>
+    <a href="/res/launch">返回列表</a>
+    <a href="/res/launch/{{$record->id}}/edit">编辑</a>
     <div>{{$record->type}}</div>
     @foreach($record->resources as $resource)
         <div>{{$resource->format}}</div>

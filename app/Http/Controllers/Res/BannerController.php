@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Res;
 
 use App\Logic\BannerResBiz;
+use App\Logic\Utils;
 use App\Models\BannerRes;
 use App\Models\ResourceVer;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class BannerController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +22,7 @@ class BannerController extends Controller
      */
     public function index()
     {
-        return view('banner.index', ['banners' => BannerResBiz::getAll()]);
+        return view('res.banner.index', ['banners' => BannerResBiz::getAll()]);
     }
 
     /**
@@ -30,7 +32,7 @@ class BannerController extends Controller
      */
     public function create()
     {
-        return view('banner.create', ['formats' => BannerResBiz::getFormats()]);
+        return view('res.banner.create', ['formats' => Utils::getResFormats()]);
     }
 
     /**
@@ -51,7 +53,6 @@ class BannerController extends Controller
         $bannerCount = -1;
 
         $bannerRes = new BannerRes();
-        $bannerRes->style = 0;
         $bannerRes->url = $request->input('url');
         $bannerRes->start_date = $request->input('start_date');
         $bannerRes->end_date = $request->input('end_date');
@@ -62,9 +63,9 @@ class BannerController extends Controller
         foreach ($formats as $format) {
             $banners = $request->input($format);//banner相对路径数组
             if (count($banners) == 0)
-                return view('banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('您还没有上传图片！');
+                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
             if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return view('banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('图片数量不一致！');
+                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
             }
             $bannerCount = count($banners);
             $bannerRes->num = count($banners);
@@ -80,7 +81,7 @@ class BannerController extends Controller
             $ver->ver = time();
             $ver->save();
         }
-        return Redirect::to('banners');
+        return Redirect::to('res/banner');
     }
 
     /**
@@ -94,7 +95,7 @@ class BannerController extends Controller
         $banner = BannerResBiz::getOne($id);
         if ($banner == null)
             return view('errors.404');
-        return view('banner.show', ['banner' => $banner]);
+        return view('res.banner.show', ['banner' => $banner]);
     }
 
     /**
@@ -108,7 +109,7 @@ class BannerController extends Controller
         $bannerRes = BannerResBiz::getOne($id);
         if ($bannerRes == null)
             return view('errors.404');
-        return view('banner.edit', ['id' => $id, 'formats' => BannerResBiz::getFormats(), 'banner' => $bannerRes]);
+        return view('res.banner.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'banner' => $bannerRes]);
     }
 
     /**
@@ -143,9 +144,9 @@ class BannerController extends Controller
         foreach ($formats as $format) {
             $banners = $request->input($format);//banner相对路径数组
             if (count($banners) == 0)
-                return view('res.banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('您还没有上传图片！');
+                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
             if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return view('res.banner.create', ['formats' => BannerResBiz::getFormats()])->withErrors('图片数量不一致！');
+                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
             }
             $bannerCount = count($banners);
             $bannerRes->num = count($banners);
@@ -161,7 +162,7 @@ class BannerController extends Controller
             $ver->ver = time();
             $ver->save();
         }
-        return Redirect::to('banners/');
+        return Redirect::to('res/banner');
     }
 
     /**
@@ -173,6 +174,6 @@ class BannerController extends Controller
     public function destroy($id)
     {
         BannerRes::destroy($id);
-        return Redirect::to('banners');
+        return Redirect::to('res/banner');
     }
 }

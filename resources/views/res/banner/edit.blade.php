@@ -2,8 +2,8 @@
 
 @section('content')
     <h2>编辑Banner</h2>
-    <a href="/banners">返回列表</a>
-    <form method="POST" action="/banners/{{$id}}">
+    <a href="/res/banner">返回列表</a>
+    <form method="POST" action="/res/banner/{{$id}}">
         {!! csrf_field() !!}
         <input type="hidden" name="_method" value="PUT">
         @foreach($formats as $format)
