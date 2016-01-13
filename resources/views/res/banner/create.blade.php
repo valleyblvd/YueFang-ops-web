@@ -20,7 +20,7 @@
         <input type="text" name="url" placeholder="url"/>
         <input type="text" name="start_date" placeholder="开始日期(必填)"/>
         <input type="text" name="end_date" placeholder="结束日期(必填)"/>
-        <input type="checkbox" name="active"/>启用
+        <label><input type="checkbox" name="active"/>启用</label>
         <button type="submit">保存</button>
     </form>
     @include('partial._error')

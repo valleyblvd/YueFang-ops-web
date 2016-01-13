@@ -47,7 +47,7 @@
         <input type="text" name="url" placeholder="url" value="{{$record->url}}"/>
         <input type="text" name="start_date" placeholder="开始日期" value="{{$record->start_date}}"/>
         <input type="text" name="end_date" placeholder="结束日期" value="{{$record->end_date}}"/>
-        <input type="checkbox" name="active" {{$record->active==1?'checked':''}} />启用
+        <label><input type="checkbox" name="active" {{$record->active==1?'checked':''}} />启用</label>
         <button type="submit">保存</button>
     </form>
     @include('partial._error')

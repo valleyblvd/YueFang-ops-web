@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Logic\PropertyExtBiz;
+use App\Models\PropertyExt;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
 
 class ExtController extends Controller
 {
@@ -16,7 +19,7 @@ class ExtController extends Controller
      */
     public function index()
     {
-        //
+        return view('property.ext.index',['records'=>PropertyExtBiz::getAll()]);
     }
 
     /**
@@ -26,7 +29,7 @@ class ExtController extends Controller
      */
     public function create()
     {
-        //
+        return view('property.ext.create');
     }
 
     /**
@@ -37,7 +40,17 @@ class ExtController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'mlsId' => 'required'
+        ]);
+
+        $record = new PropertyExt();
+        $record->mlsId = $request->input('mlsId');
+        $record->tag = $request->input('tag');
+        $record->hot = $request->input('hot') ? 1 : 0;
+        $record->recommended = $request->input('recommended') ? 1 : 0;
+        PropertyExtBiz::store($record);
+        return Redirect::to('properties/ext');
     }
 
     /**
@@ -48,7 +61,7 @@ class ExtController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('property.ext.show',['record'=>PropertyExtBiz::getOne($id)]);
     }
 
     /**
@@ -59,7 +72,7 @@ class ExtController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('property.ext.edit', ['record' => PropertyExtBiz::getOne($id)]);
     }
 
     /**
@@ -71,7 +84,16 @@ class ExtController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $record = PropertyExt::find($id);
+        if ($record == null)
+            return view('errors.404');
+
+        $record->mlsId = $request->input('mlsId');
+        $record->tag = $request->input('tag');
+        $record->hot = $request->input('hot') ? 1 : 0;
+        $record->recommended = $request->input('recommended') ? 1 : 0;
+        PropertyExtBiz::store($record);
+        return Redirect::to('properties/ext');
     }
 
     /**
@@ -82,6 +104,7 @@ class ExtController extends Controller
      */
     public function destroy($id)
     {
-        //
+        PropertyExtBiz::delete($id);
+        return Redirect::to('properties/ext');
     }
 }

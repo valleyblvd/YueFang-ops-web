@@ -18,8 +18,6 @@ Route::get('/', function () {
 Route::get('login','Auth\AuthController@getLogin');
 Route::post('login','Auth\AuthController@postLogin');
 
-Route::resource('clients','ClientController');
-
 Route::resource('properties/customize','Property\CustomizeController');
 Route::resource('properties/ext','Property\ExtController');
 Route::resource('res/banner','Res\BannerController');
