@@ -26,9 +26,9 @@ class Utils
     public static function getResFormats()
     {
         $formats = [];
-        $formats[] = ['id' => 'ip4', 'name' => 'iPhone 4'];
-        $formats[] = ['id' => 'ip5', 'name' => 'iPhone 5'];
-        $formats[] = ['id' => 'ip6', 'name' => 'iPhone 6'];
+        $formats[] = ['id' => 'ip4', 'name' => 'iPhone 4,iPhone 5,iPhone 6,'];
+        //$formats[] = ['id' => 'ip5', 'name' => 'iPhone 5'];
+        //$formats[] = ['id' => 'ip6', 'name' => 'iPhone 6'];
         $formats[] = ['id' => 'ip6p', 'name' => 'iPhone 6 Plus'];
         return $formats;
     }

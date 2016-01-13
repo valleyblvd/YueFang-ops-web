@@ -31,7 +31,7 @@ class LaunchController extends Controller
      */
     public function create()
     {
-        return view('res.launch.create', ['formats' => Utils::getResFormats()]);
+        return view('res.launch.create', ['formats' => $this->getResFormats()]);
     }
 
     /**
@@ -59,7 +59,7 @@ class LaunchController extends Controller
         $record->end_date = $request->input('end_date');
         $record->active = $request->input('active') ? 1 : 0;
         if ($type == 3) {//home page html
-            $record->format='';
+            $record->format = '';
             $record->ext = 'html';
             $record->num = count(explode(';', $request->input('url')));
             $record->save();
@@ -77,9 +77,9 @@ class LaunchController extends Controller
             foreach ($formats as $format) {
                 $imgs = $request->input($format);//img相对路径数组
                 if (count($imgs) == 0)
-                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
+                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
                 if ($bannerCount > -1 && count($imgs) != $bannerCount) {
-                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
+                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
                 }
                 $bannerCount = count($imgs);
                 $record->num = count($imgs);
@@ -124,7 +124,7 @@ class LaunchController extends Controller
         $record = LaunchResBiz::getOne($id);
         if ($record == null)
             return view('errors.404');
-        return view('res.launch.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'record' => $record]);
+        return view('res.launch.edit', ['id' => $id, 'formats' => $this->getResFormats(), 'record' => $record]);
     }
 
     /**
@@ -152,7 +152,7 @@ class LaunchController extends Controller
         $record->end_date = $request->input('end_date');
         $record->active = $request->input('active') ? 1 : 0;
         if ($record->type == 3) {//home page html
-            $record->format='';
+            $record->format = '';
             $record->ext = 'html';
             $record->num = count(explode(';', $request->input('url')));
             $record->save();
@@ -161,7 +161,7 @@ class LaunchController extends Controller
                 $ver->ver = time();
                 $ver->save();
             }
-        }else{
+        } else {
             $relativePathPrefix = Utils::getLaunchImgPath($record->type);
             $bannerCount = -1;
             $record->img = $relativePathPrefix;
@@ -170,9 +170,9 @@ class LaunchController extends Controller
             foreach ($formats as $format) {
                 $banners = $request->input($format);//banner相对路径数组
                 if (count($banners) == 0)
-                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
+                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
                 if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                    return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
+                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
                 }
                 $bannerCount = count($banners);
                 $record->num = count($banners);
@@ -203,5 +203,15 @@ class LaunchController extends Controller
     {
         LaunchRes::destroy($id);
         return Redirect::to('res/launch');
+    }
+
+    private static function getResFormats()
+    {
+        $formats = [];
+        $formats[] = ['id' => 'ip4', 'name' => 'iPhone 4'];
+        $formats[] = ['id' => 'ip5', 'name' => 'iPhone 5'];
+        $formats[] = ['id' => 'ip6', 'name' => 'iPhone 6'];
+        $formats[] = ['id' => 'ip6p', 'name' => 'iPhone 6 Plus'];
+        return $formats;
     }
 }
