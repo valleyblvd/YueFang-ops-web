@@ -17,9 +17,9 @@ Route::get('/', function () {
 
 Route::get('login','Auth\AuthController@getLogin');
 Route::post('login','Auth\AuthController@postLogin');
-
 Route::resource('properties/customize','Property\CustomizeController');
 Route::resource('properties/ext','Property\ExtController');
+Route::resource('properties','Property\PropertyController');
 Route::resource('res/banner','Res\BannerController');
 Route::resource('res/launch','Res\LaunchController');
 Route::resource('files','FileController');

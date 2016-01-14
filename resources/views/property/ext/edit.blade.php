@@ -10,6 +10,7 @@
         <input type="text" name="tag" placeholder="标签" value="{{$record->tag}}"/>
         <label><input type="checkbox" name="hot" {{$record->hot?'checked':''}}/>热门</label>
         <label><input type="checkbox" name="recommended" {{$record->recommended?'checked':''}}/>推荐</label>
+{{--        <label><input type="checkbox" name="recommended" {{checked($record->recommended)}}/>推荐</label>--}}
         <button type="submit">保存</button>
     </form>
     @include('partial._error')

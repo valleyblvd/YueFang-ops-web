@@ -91,7 +91,7 @@ class ExtController extends Controller
         $record->mlsId = $request->input('mlsId');
         $record->tag = $request->input('tag');
         $record->hot = $request->input('hot') ? 1 : 0;
-        $record->recommended = $request->input('recommended') ? 1 : 0;
+        $record->recommended = (bool)$request->input('recommended');
         PropertyExtBiz::store($record);
         return Redirect::to('properties/ext');
     }
