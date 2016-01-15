@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Property extends Model
 {
     protected $table = 'residences';
+    protected $primaryKey = 'Id';
     public $timestamps = false;
 
     public function fromRequest($request)
