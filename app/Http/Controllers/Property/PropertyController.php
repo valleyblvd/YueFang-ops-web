@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Property;
 
 use App\Logic\PropertyBiz;
 use App\Models\Property;
+use App\Tools\StringUtils;
+use App\Tools\UrlUtils;
 use Illuminate\Http\Request;
+use GuzzleHttp;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -29,7 +32,12 @@ class PropertyController extends Controller
      */
     public function create()
     {
-        return view('property.create');
+        return view('property.create', [
+            'DataSourceId' => '',
+            'DataId' => '',
+            'ReferenceUrl'=>'',
+            'ListPrice'=>''
+        ]);
     }
 
     /**
@@ -41,8 +49,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'DataSourceId' => 'required',
-            'MLSNumber' => 'required'
+            'DataSourceId' => 'required'
         ]);
 
         $model = new Property();
@@ -82,7 +89,7 @@ class PropertyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $model=Property::find($id);
+        $model = Property::find($id);
         $model->DataSourceId = $request->input("DataSourceId");
         $model->DataId = $request->input("DataId");
         $model->ReferenceUrl = $request->input("ReferenceUrl");
@@ -126,5 +133,44 @@ class PropertyController extends Controller
     {
         PropertyBiz::delete($id);
         return Redirect::to('properties');
+    }
+
+    /**
+     * 从给定的URL中采集房源信息
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getFromRef(Request $request)
+    {
+        $this->validate($request, [
+            'ref_url' => 'required|url'
+        ]);
+        $domain = UrlUtils::getMainDomain($request->ref_url);
+        $html = new \simple_html_dom();
+        $html->load_file($request->ref_url);
+
+        if (StringUtils::equalsIgnoreCase($domain, 'loopnet.com')) {
+            $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
+            $listPrice=$html->find('#topFSdata dd',0)->plaintext;
+            return view('property.create', [
+                'DataSourceId' => 5,
+                'DataId' => trim($dataId),
+                'ReferenceUrl'=>$request->ref_url,
+                'ListPrice'=>str_replace(',','',str_replace('$','',$listPrice))
+            ]);
+        } else if (StringUtils::equalsIgnoreCase($domain, 'newhomesource.com')) {
+            $DataId = $html->find('#PlanId', 0)->value;
+            $listPrice=$html->find('#nhs_DetailsDescriptionAreaWrapper .nhs_DetailsPrice span',0)->plaintext;
+            return view('property.create', [
+                'DataSourceId' => 6,
+                'DataId' => $DataId,
+                'ReferenceUrl'=>$request->ref_url,
+                'ListPrice'=>str_replace(',','',str_replace('$','',$listPrice))
+            ]);
+        } else {
+            return view('property.create', [
+                'DataSourceId' => '',
+                'DataId' => ''])->withErrors('Not supported data source.');
+        }
     }
 }

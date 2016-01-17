@@ -19,6 +19,7 @@ Route::get('login','Auth\AuthController@getLogin');
 Route::post('login','Auth\AuthController@postLogin');
 Route::resource('properties/customize','Property\CustomizeController');
 Route::resource('properties/ext','Property\ExtController');
+Route::post('properties/ref','Property\PropertyController@getFromRef');
 Route::resource('properties','Property\PropertyController');
 Route::resource('res/banner','Res\BannerController');
 Route::resource('res/launch','Res\LaunchController');
