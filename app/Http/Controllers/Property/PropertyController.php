@@ -35,8 +35,9 @@ class PropertyController extends Controller
         return view('property.create', [
             'DataSourceId' => '',
             'DataId' => '',
-            'ReferenceUrl'=>'',
-            'ListPrice'=>''
+            'ReferenceUrl' => '',
+            'ListPrice' => '',
+            'PhotoUrls'=>''
         ]);
     }
 
@@ -147,30 +148,64 @@ class PropertyController extends Controller
         ]);
         $domain = UrlUtils::getMainDomain($request->ref_url);
         $html = new \simple_html_dom();
-        $html->load_file($request->ref_url);
+        $httpClient = new GuzzleHttp\Client();
+        $res = $httpClient->get($request->ref_url)->getBody()->getContents();
+        $html->load($res);
 
         if (StringUtils::equalsIgnoreCase($domain, 'loopnet.com')) {
             $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
-            $listPrice=$html->find('#topFSdata dd',0)->plaintext;
+            $listPrice = $html->find('#topFSdata dd', 0)->plaintext;
+            $photos=$html->find('ul#wideCarousel>li>a.photo');
+            $photoUrls=[];
+            foreach($photos as $photo){
+                var_dump($photo);
+                if(!StringUtils::equals($photo,'#'))
+                    array_push($photoUrls,$photo->href);
+            }
+            $html->clear();
             return view('property.create', [
                 'DataSourceId' => 5,
                 'DataId' => trim($dataId),
-                'ReferenceUrl'=>$request->ref_url,
-                'ListPrice'=>str_replace(',','',str_replace('$','',$listPrice))
+                'ReferenceUrl' => $request->ref_url,
+                'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
+                'PhotoUrls'=>implode(',',$photoUrls)
             ]);
         } else if (StringUtils::equalsIgnoreCase($domain, 'newhomesource.com')) {
-            $DataId = $html->find('#PlanId', 0)->value;
-            $listPrice=$html->find('#nhs_DetailsDescriptionAreaWrapper .nhs_DetailsPrice span',0)->plaintext;
+            $planId = $html->find('#PlanId', 0)->value;
+            $communityId = $html->find('#CommunityId', 0)->value;
+            $specId = $html->find('#SpecId', 0)->value;
+
+            //照片需要通过另外的API获取，必须的参数：communityId、planId、specId、isPreview
+            $photoRes = $httpClient->post('http://www.newhomesource.com/detailgetgallery', [
+                'form_params' => ['communityId' => $communityId, 'planId' => $planId, 'specId' => $specId, 'isPreview' => 'False']
+            ]);
+            $photoObj=json_decode($photoRes->getBody()->getContents());
+            $photoUrls=[];
+            foreach($photoObj->PropertyMediaLinks as $photo){
+                //type:i是图片，v是视频
+                if($photo->Type=='i')
+                    array_push($photoUrls,'http://nhs-dynamic.bdxcdn.com'.$photo->Url);
+            }
+
+            $dataId = $planId;
+            $listPrice = $html->find('#nhs_DetailsDescriptionAreaWrapper .nhs_DetailsPrice span', 0)->plaintext;
+            $html->clear();
             return view('property.create', [
                 'DataSourceId' => 6,
-                'DataId' => $DataId,
-                'ReferenceUrl'=>$request->ref_url,
-                'ListPrice'=>str_replace(',','',str_replace('$','',$listPrice))
+                'DataId' => $dataId,
+                'ReferenceUrl' => $request->ref_url,
+                'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
+                'PhotoUrls'=>implode(',',$photoUrls)
             ]);
         } else {
+            $html->clear();
             return view('property.create', [
                 'DataSourceId' => '',
-                'DataId' => ''])->withErrors('Not supported data source.');
+                'DataId' => '',
+                'ReferenceUrl' => '',
+                'ListPrice' => '',
+                'PhotoUrls'=>''
+            ])->withErrors('Not supported data source.');
         }
     }
 }

@@ -15,6 +15,7 @@
         </form>
         <div>
             <p>如：</p>
+
             <p>http://www.loopnet.com/xNet/MainSite/Listing/Profile/Profile.aspx?LID=19566204</p>
 
             <p>http://www.newhomesource.com/homedetail/planid-1085116</p>
@@ -30,7 +31,7 @@
         <label>ReferenceUrl</label>
         <input type="text" name="ReferenceUrl" placeholder="ReferenceUrl" value="{{$ReferenceUrl}}"/>
         <label>PhotoUrls</label>
-        <input type="text" name="PhotoUrls" placeholder="PhotoUrls"/>
+        <input type="text" name="PhotoUrls" placeholder="PhotoUrls" value="{{$PhotoUrls}}"/>
         <label>MLSNumber</label>
         <input type="text" name="MLSNumber" placeholder="MLSNumber"/><br><br>
         <label>Status</label>
@@ -79,7 +80,6 @@
         <input type="text" name="BathsFull" placeholder="BathsFull"/>
         <label>BathsHalf</label>
         <input type="text" name="BathsHalf" placeholder="BathsHalf"/>
-        <label>PhotoUrls</label>
         <button type="submit">保存</button>
     </form>
 @endsection
