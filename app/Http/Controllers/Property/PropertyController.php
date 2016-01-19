@@ -37,7 +37,12 @@ class PropertyController extends Controller
             'DataId' => '',
             'ReferenceUrl' => '',
             'ListPrice' => '',
-            'PhotoUrls'=>''
+            'PhotoUrls' => '',
+            'Bedrooms' => '',
+            'BathFull' => '',
+            'LotSqFt' => '',
+            'GarageSpaces' => '',
+            'Description' => ''
         ]);
     }
 
@@ -155,12 +160,12 @@ class PropertyController extends Controller
         if (StringUtils::equalsIgnoreCase($domain, 'loopnet.com')) {
             $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
             $listPrice = $html->find('#topFSdata dd', 0)->plaintext;
-            $photos=$html->find('ul#wideCarousel>li>a.photo');
-            $photoUrls=[];
-            foreach($photos as $photo){
+            $photos = $html->find('ul#wideCarousel>li>a.photo');
+            $photoUrls = [];
+            foreach ($photos as $photo) {
                 var_dump($photo);
-                if(!StringUtils::equals($photo,'#'))
-                    array_push($photoUrls,$photo->href);
+                if (!StringUtils::equals($photo, '#'))
+                    array_push($photoUrls, $photo->href);
             }
             $html->clear();
             return view('property.create', [
@@ -168,7 +173,12 @@ class PropertyController extends Controller
                 'DataId' => trim($dataId),
                 'ReferenceUrl' => $request->ref_url,
                 'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
-                'PhotoUrls'=>implode(',',$photoUrls)
+                'PhotoUrls' => implode(',', $photoUrls),
+                'Bedrooms' => '',
+                'BathFull' => '',
+                'LotSqFt' => '',
+                'GarageSpaces' => '',
+                'Description' => ''
             ]);
         } else if (StringUtils::equalsIgnoreCase($domain, 'newhomesource.com')) {
             $planId = $html->find('#PlanId', 0)->value;
@@ -179,23 +189,52 @@ class PropertyController extends Controller
             $photoRes = $httpClient->post('http://www.newhomesource.com/detailgetgallery', [
                 'form_params' => ['communityId' => $communityId, 'planId' => $planId, 'specId' => $specId, 'isPreview' => 'False']
             ]);
-            $photoObj=json_decode($photoRes->getBody()->getContents());
-            $photoUrls=[];
-            foreach($photoObj->PropertyMediaLinks as $photo){
+            $photoObj = json_decode($photoRes->getBody()->getContents());
+            $photoUrls = [];
+            foreach ($photoObj->PropertyMediaLinks as $photo) {
                 //type:i是图片，v是视频
-                if($photo->Type=='i')
-                    array_push($photoUrls,'http://nhs-dynamic.bdxcdn.com'.$photo->Url);
+                if ($photo->Type == 'i')
+                    array_push($photoUrls, 'http://nhs-dynamic.bdxcdn.com' . $photo->Url);
             }
 
             $dataId = $planId;
             $listPrice = $html->find('#nhs_DetailsDescriptionAreaWrapper .nhs_DetailsPrice span', 0)->plaintext;
+            $bedrooms = null;
+            $bathrooms = null;
+            $lotSqFt = null;
+            $garageSpaces = null;
+            foreach ($html->find('#nhs_HomeDetailsHeaderBrandHomesSqFt ul li') as $li) {
+                $text = $li->plaintext;
+                //解析Bedrooms
+                if (StringUtils::containsIgnoreCase($text, 'Bedrooms')) {
+                    $bedrooms = str_ireplace('Bedrooms', '', $text);
+                    $bedrooms = str_replace(' ', '', $bedrooms);
+                } else if (StringUtils::containsIgnoreCase($text, 'Bathrooms')) {
+                    $bathrooms = str_ireplace('Bathrooms', '', $text);
+                    $bathrooms = str_replace(' ', '', $bathrooms);
+                } else if (StringUtils::containsIgnoreCase($text, 'sq.ft.')) {
+                    $lotSqFt = str_ireplace('sq.ft.', '', $text);
+                    $lotSqFt = str_replace(',', '', $lotSqFt);
+                    $lotSqFt = str_replace(' ', '', $lotSqFt);
+                } else if (StringUtils::containsIgnoreCase($text, 'Garages')) {
+                    $garageSpaces = str_ireplace('Garages', '', $text);
+                    $garageSpaces = str_replace(' ', '', $garageSpaces);
+                }
+            }
+            $description = $html->find('#nhs_DetailDescriptionArea', 0)->plaintext;
+            $description = str_replace(' ', '', $description);
             $html->clear();
             return view('property.create', [
                 'DataSourceId' => 6,
                 'DataId' => $dataId,
                 'ReferenceUrl' => $request->ref_url,
                 'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
-                'PhotoUrls'=>implode(',',$photoUrls)
+                'PhotoUrls' => implode(',', $photoUrls),
+                'Bedrooms' => $bedrooms,
+                'BathFull' => $bathrooms,
+                'LotSqFt' => $lotSqFt,
+                'GarageSpaces' => $garageSpaces,
+                'Description' => $description
             ]);
         } else {
             $html->clear();
@@ -204,7 +243,12 @@ class PropertyController extends Controller
                 'DataId' => '',
                 'ReferenceUrl' => '',
                 'ListPrice' => '',
-                'PhotoUrls'=>''
+                'PhotoUrls' => '',
+                'Bedrooms' => '',
+                'BathFull' => '',
+                'LotSqFt' => '',
+                'GarageSpaces' => '',
+                'Description' => ''
             ])->withErrors('Not supported data source.');
         }
     }

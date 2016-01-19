@@ -67,19 +67,23 @@
         <label>Location</label>
         <input type="text" name="Location" placeholder="Location"/>
         <label>Description</label>
-        <input type="text" name="Description" placeholder="Description"/>
+        <input type="text" name="Description" placeholder="Description" value="{{$Description}}"/>
         <label>YearBuilt</label>
         <input type="text" name="YearBuilt" placeholder="YearBuilt"/><br><br>
         <label>LotSqFt</label>
-        <input type="text" name="LotSqFt" placeholder="LotSqFt"/>
+        <input type="text" name="LotSqFt" placeholder="LotSqFt" value="{{$LotSqFt}}"/>
         <label>StructureSqFt</label>
         <input type="text" name="StructureSqFt" placeholder="StructureSqFt"/>
         <label>Bedrooms</label>
-        <input type="text" name="Bedrooms" placeholder="Bedrooms"/><br><br>
+        <input type="text" name="Bedrooms" placeholder="Bedrooms" value="{{$Bedrooms}}"/><br><br>
         <label>BathsFull</label>
-        <input type="text" name="BathsFull" placeholder="BathsFull"/>
+        <input type="text" name="BathsFull" placeholder="BathsFull" value="{{$BathFull}}"/>
         <label>BathsHalf</label>
-        <input type="text" name="BathsHalf" placeholder="BathsHalf"/>
+        <input type="text" name="BathsHalf" placeholder="BathsHalf"/><br><br>
+        <lable>GarageSpaces</lable>
+        <input type="text" name="GarageSpaces" placeholder="GarageSpaces" value="{{$GarageSpaces}}"/>
+        <lable>ParkingSpaces</lable>
+        <input type="text" name="ParkingSpaces" placeholder="ParkingSpaces"/>
         <button type="submit">保存</button>
     </form>
 @endsection
