@@ -43,7 +43,7 @@
         <label>SaleTypeEnum</label>
         <input type="text" name="SaleTypeEnum" placeholder="SaleTypeEnum"/><br><br>
         <label>PropertyType</label>
-        <input type="text" name="PropertyType" placeholder="PropertyType"/>
+        <input type="text" name="PropertyType" placeholder="PropertyType" value="{{$PropertyType}}"/>
         <label>PropertyTypeEnum</label>
         <input type="text" name="PropertyTypeEnum" placeholder="PropertyTypeEnum"/><br><br>
         <label>ListPrice</label>
@@ -65,7 +65,7 @@
         <label>CrossStreets</label>
         <input type="text" name="CrossStreets" placeholder="CrossStreets"/><br><br>
         <label>Location</label>
-        <input type="text" name="Location" placeholder="Location"/>
+        <input type="text" name="Location" placeholder="Location" value="{{$Location}}"/>
         <label>Description</label>
         <input type="text" name="Description" placeholder="Description" value="{{$Description}}"/>
         <label>YearBuilt</label>
