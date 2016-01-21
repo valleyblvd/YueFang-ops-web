@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Property extends Model
 {
@@ -32,7 +33,7 @@ class Property extends Model
         $this->PostalCode = $request->input("PostalCode");
         $this->Area = $request->input("Area");
         $this->CrossStreets = $request->input("CrossStreets");
-        $this->Location = $request->input("Location");
+        $this->Location = DB::raw($request->input("Location"));
         $this->Description = $request->input("Description");
         $this->YearBuilt = $request->input("YearBuilt");
         $this->LotSqFt = $request->input("LotSqFt");

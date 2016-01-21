@@ -51,15 +51,15 @@
         <label>SalePrice</label>
         <input type="text" name="SalePrice" placeholder="SalePrice"/>
         <label>State</label>
-        <input type="text" name="State" placeholder="State"/><br><br>
+        <input type="text" name="State" placeholder="State" value="{{$State}}"/><br><br>
         <label>County</label>
-        <input type="text" name="County" placeholder="County"/>
+        <input type="text" name="County" placeholder="County" value="{{$County}}"/>
         <label>City</label>
-        <input type="text" name="City" placeholder="City"/>
+        <input type="text" name="City" placeholder="City" value="{{$City}}"/>
         <label>Address</label>
-        <input type="text" name="Address" placeholder="Address"/><br><br>
+        <input type="text" name="Address" placeholder="Address" value="{{$Address}}"/><br><br>
         <label>PostalCode</label>
-        <input type="text" name="PostalCode" placeholder="PostalCode"/>
+        <input type="text" name="PostalCode" placeholder="PostalCode" value="{{$PostalCode}}"/>
         <label>Area</label>
         <input type="text" name="Area" placeholder="Area"/>
         <label>CrossStreets</label>

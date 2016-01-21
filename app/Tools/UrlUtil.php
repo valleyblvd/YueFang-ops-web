@@ -3,7 +3,7 @@
 namespace App\Tools;
 
 
-class UrlUtils
+class UrlUtil
 {
     /**
      * 获取指定url的一级域名

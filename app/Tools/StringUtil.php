@@ -2,7 +2,7 @@
 namespace App\Tools;
 
 
-class StringUtils
+class StringUtil
 {
     /**
      * 比较字符串，区分大小写

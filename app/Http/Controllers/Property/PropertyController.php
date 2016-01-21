@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Property;
 
 use App\Logic\PropertyBiz;
 use App\Models\Property;
-use App\Tools\StringUtils;
-use App\Tools\UrlUtils;
+use App\Tools\GoogleGeoHelper;
+use App\Tools\HttpUtil;
+use App\Tools\StringUtil;
+use App\Tools\UrlUtil;
 use Illuminate\Http\Request;
 use GuzzleHttp;
 
@@ -44,6 +46,11 @@ class PropertyController extends Controller
             'GarageSpaces' => '',
             'Description' => '',
             'PropertyType' => '',
+            'State' => '',
+            'County' => '',
+            'City' => '',
+            'Address' => '',
+            'PostalCode' => '',
             'Location' => ''
         ]);
     }
@@ -153,24 +160,40 @@ class PropertyController extends Controller
         $this->validate($request, [
             'ref_url' => 'required|url'
         ]);
-        $domain = UrlUtils::getMainDomain($request->ref_url);
+
+        $domain = UrlUtil::getMainDomain($request->ref_url);
         $html = new \simple_html_dom();
-        $httpClient = new GuzzleHttp\Client();
+        $httpClient = HttpUtil::getGuzzleClient();
         $res = $httpClient->get($request->ref_url)->getBody()->getContents();
         $html->load($res);
 
-        if (StringUtils::equalsIgnoreCase($domain, 'loopnet.com')) {
+        if (StringUtil::equalsIgnoreCase($domain, 'loopnet.com')) {
             $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
+            //TODO:先查询数据库，判断该房源是否在存在
             $listPrice = $html->find('#topFSdata dd', 0)->plaintext;//价格
             $lotSqFt = $html->find('#topFSdata dd', 1)->plaintext;//面积
             $lotSqFt = str_ireplace('AC', '', $lotSqFt);
             $lotSqFt = str_replace(' ', '', $lotSqFt);
             $lotSqFt = $lotSqFt * 43560;
             $propertyType = $html->find('#topFSdata dd', 2)->plaintext;//房产类型
-            $locationSrc = $html->find('#ifMap', 0)->src;
-            $lat = UrlUtils::getUrlParam($locationSrc, 'Lat');
-            $lng = UrlUtils::getUrlParam($locationSrc, 'Long');
-            $location = "$lat,$lng";
+            //$locationSrc = $html->find('#ifMap', 0)->src;
+            //$lat = UrlUtil::getUrlParam($locationSrc, 'Lat');
+            //$lng = UrlUtil::getUrlParam($locationSrc, 'Long');
+            //$location = "$lat,$lng";
+            $addressStr = $html->find('#ProfileMainContent1_PropertyAddress1_litPropertyFullAddress', 0)->plaintext;
+            $addressRes = $httpClient->get('http://maps.googleapis.com/maps/api/geocode/json?address=' . $addressStr);
+            $addressJson = json_decode($addressRes->getBody()->getContents());
+            if ($addressJson->status == 'OK') {
+                $addressObj = GoogleGeoHelper::getAddress($addressJson->results);
+            }
+            if ($addressObj) {
+                $state = $addressObj->state;
+                $county = $addressObj->county;
+                $city = $addressObj->city;
+                $address = "$addressObj->streetNumber $addressObj->street";
+                $postalCode = $addressObj->postalCode;
+                $location = "GeomFromText('POINT($addressObj->lng $addressObj->lat)')";
+            }
             $description = '';//描述
             foreach ($html->find('.detailsModule') as $desc) {
                 if ($desc->first_child()->plaintext == 'Description') {
@@ -183,15 +206,14 @@ class PropertyController extends Controller
             $photos = $html->find('ul#wideCarousel>li>a.photo');//照片
             $photoUrls = [];
             foreach ($photos as $photo) {
-                if (!StringUtils::equals($photo->href, '#')) {
+                if (!StringUtil::equals($photo->href, '#')) {
                     array_push($photoUrls, $photo->href);
                 }
-
             }
 
             $html->clear();
             return view('property.create', [
-                'DataSourceId' => 5,
+                'DataSourceId' => 1001,
                 'DataId' => trim($dataId),
                 'ReferenceUrl' => $request->ref_url,
                 'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
@@ -202,9 +224,14 @@ class PropertyController extends Controller
                 'GarageSpaces' => '',
                 'Description' => $description,
                 'PropertyType' => $propertyType,
+                'State' => $state,
+                'County' => $county,
+                'City' => $city,
+                'Address' => $address,
+                'PostalCode' => $postalCode,
                 'Location' => $location
             ]);
-        } else if (StringUtils::equalsIgnoreCase($domain, 'newhomesource.com')) {
+        } else if (StringUtil::equalsIgnoreCase($domain, 'newhomesource.com')) {
             $planId = $html->find('#PlanId', 0)->value;
             $communityId = $html->find('#CommunityId', 0)->value;
             $specId = $html->find('#SpecId', 0)->value;
@@ -223,38 +250,35 @@ class PropertyController extends Controller
 
             $dataId = $planId;
             $listPrice = $html->find('#nhs_DetailsDescriptionAreaWrapper .nhs_DetailsPrice span', 0)->plaintext;
-            $bedrooms = null;
-            $bathrooms = null;
-            $lotSqFt = null;
-            $garageSpaces = null;
             foreach ($html->find('#nhs_HomeDetailsHeaderBrandHomesSqFt ul li') as $li) {
                 $text = $li->plaintext;
-                if (StringUtils::containsIgnoreCase($text, 'Bedrooms')) {//卧室数
+                if (StringUtil::containsIgnoreCase($text, 'Bedrooms')) {//卧室数
                     $bedrooms = str_ireplace('Bedrooms', '', $text);
                     $bedrooms = str_replace(' ', '', $bedrooms);
-                } else if (StringUtils::containsIgnoreCase($text, 'Bathrooms')) {//浴室数
+                } else if (StringUtil::containsIgnoreCase($text, 'Bathrooms')) {//浴室数
                     $bathrooms = str_ireplace('Bathrooms', '', $text);
                     $bathrooms = str_replace(' ', '', $bathrooms);
-                } else if (StringUtils::containsIgnoreCase($text, 'sq.ft.')) {//面积
+                } else if (StringUtil::containsIgnoreCase($text, 'sq.ft.')) {//面积
                     $lotSqFt = str_ireplace('sq.ft.', '', $text);
                     $lotSqFt = str_replace(',', '', $lotSqFt);
                     $lotSqFt = str_replace(' ', '', $lotSqFt);
-                } else if (StringUtils::containsIgnoreCase($text, 'Garages')) {//停车位
+                } else if (StringUtil::containsIgnoreCase($text, 'Garages')) {//停车位
                     $garageSpaces = str_ireplace('Garages', '', $text);
                     $garageSpaces = str_replace(' ', '', $garageSpaces);
                 }
             }
             $description = $html->find('#nhs_DetailDescriptionArea', 0)->plaintext;
             $description = str_replace(' ', '', $description);
-            //解析位置坐标
+            //解析坐标位置
             $jsonStr = $html->find('#nhs_HomeDetailv2 script', 0)->innertext;
             $obj = json_decode($jsonStr);
             $lat = $obj->Geo->latitude;
             $lng = $obj->Geo->longitude;
-            $location = "$lat,$lng";
+            $location = "GeomFromText('POINT($lng $lat)')";
+
             $html->clear();
             return view('property.create', [
-                'DataSourceId' => 6,
+                'DataSourceId' => 1002,
                 'DataId' => $dataId,
                 'ReferenceUrl' => $request->ref_url,
                 'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
@@ -265,6 +289,11 @@ class PropertyController extends Controller
                 'GarageSpaces' => $garageSpaces,
                 'Description' => $description,
                 'PropertyType' => '',
+                'State' => '',
+                'County' => '',
+                'City' => '',
+                'Address' => '',
+                'PostalCode' => '',
                 'Location' => $location
             ]);
         } else {
@@ -281,6 +310,11 @@ class PropertyController extends Controller
                 'GarageSpaces' => '',
                 'Description' => '',
                 'PropertyType' => '',
+                'State' => '',
+                'County' => '',
+                'City' => '',
+                'Address' => '',
+                'PostalCode' => '',
                 'Location' => ''
             ])->withErrors('Not supported data source.');
         }

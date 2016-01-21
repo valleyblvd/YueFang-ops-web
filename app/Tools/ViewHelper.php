@@ -3,7 +3,7 @@
 namespace App\Tools;
 
 
-class ViewHelpers
+class ViewHelper
 {
     public static function checked($value)
     {
