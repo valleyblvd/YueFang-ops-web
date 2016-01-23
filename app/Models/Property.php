@@ -10,7 +10,10 @@ class Property extends Model
     protected $table = 'residences';
     protected $primaryKey = 'Id';
     public $timestamps = false;
-
+    protected $hidden = array(
+        'HistoryId',
+        'Location'
+    );
     public function fromRequest($request)
     {
         $this->DataSourceId = $request->input("DataSourceId");

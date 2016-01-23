@@ -14,6 +14,7 @@
         <script src="/lib/jquery-1.9.1.min.js"></script>
         <script src="/lib/jquery.form.js"></script>
         <script src="/lib/jquery.dragsort-0.5.2.min.js"></script>
+        <script src="/app.js"></script>
         @yield('js')
     </body>
 </html>

@@ -8,12 +8,15 @@ use App\Tools\GoogleGeoHelper;
 use App\Tools\HttpUtil;
 use App\Tools\StringUtil;
 use App\Tools\UrlUtil;
+use App\Tools\Util;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
 use GuzzleHttp;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
+use Mockery\CountValidator\Exception;
 
 class PropertyController extends Controller
 {
@@ -42,6 +45,7 @@ class PropertyController extends Controller
             'PhotoUrls' => '',
             'Bedrooms' => '',
             'BathFull' => '',
+            'BathHalf' => '',
             'LotSqFt' => '',
             'GarageSpaces' => '',
             'Description' => '',
@@ -166,71 +170,8 @@ class PropertyController extends Controller
         $httpClient = HttpUtil::getGuzzleClient();
         $res = $httpClient->get($request->ref_url)->getBody()->getContents();
         $html->load($res);
-
         if (StringUtil::equalsIgnoreCase($domain, 'loopnet.com')) {
-            $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
-            //TODO:先查询数据库，判断该房源是否在存在
-            $listPrice = $html->find('#topFSdata dd', 0)->plaintext;//价格
-            $lotSqFt = $html->find('#topFSdata dd', 1)->plaintext;//面积
-            $lotSqFt = str_ireplace('AC', '', $lotSqFt);
-            $lotSqFt = str_replace(' ', '', $lotSqFt);
-            $lotSqFt = $lotSqFt * 43560;
-            $propertyType = $html->find('#topFSdata dd', 2)->plaintext;//房产类型
-            //$locationSrc = $html->find('#ifMap', 0)->src;
-            //$lat = UrlUtil::getUrlParam($locationSrc, 'Lat');
-            //$lng = UrlUtil::getUrlParam($locationSrc, 'Long');
-            //$location = "$lat,$lng";
-            $addressStr = $html->find('#ProfileMainContent1_PropertyAddress1_litPropertyFullAddress', 0)->plaintext;
-            $addressRes = $httpClient->get('http://maps.googleapis.com/maps/api/geocode/json?address=' . $addressStr);
-            $addressJson = json_decode($addressRes->getBody()->getContents());
-            if ($addressJson->status == 'OK') {
-                $addressObj = GoogleGeoHelper::getAddress($addressJson->results);
-            }
-            if ($addressObj) {
-                $state = $addressObj->state;
-                $county = $addressObj->county;
-                $city = $addressObj->city;
-                $address = "$addressObj->streetNumber $addressObj->street";
-                $postalCode = $addressObj->postalCode;
-                $location = "GeomFromText('POINT($addressObj->lng $addressObj->lat)')";
-            }
-            $description = '';//描述
-            foreach ($html->find('.detailsModule') as $desc) {
-                if ($desc->first_child()->plaintext == 'Description') {
-                    foreach ($desc->find('p') as $p) {
-                        $description .= $p->plaintext;
-                    }
-                    break;
-                }
-            }
-            $photos = $html->find('ul#wideCarousel>li>a.photo');//照片
-            $photoUrls = [];
-            foreach ($photos as $photo) {
-                if (!StringUtil::equals($photo->href, '#')) {
-                    array_push($photoUrls, $photo->href);
-                }
-            }
 
-            $html->clear();
-            return view('property.create', [
-                'DataSourceId' => 1001,
-                'DataId' => trim($dataId),
-                'ReferenceUrl' => $request->ref_url,
-                'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
-                'PhotoUrls' => implode(',', $photoUrls),
-                'Bedrooms' => '',
-                'BathFull' => '',
-                'LotSqFt' => $lotSqFt,
-                'GarageSpaces' => '',
-                'Description' => $description,
-                'PropertyType' => $propertyType,
-                'State' => $state,
-                'County' => $county,
-                'City' => $city,
-                'Address' => $address,
-                'PostalCode' => $postalCode,
-                'Location' => $location
-            ]);
         } else if (StringUtil::equalsIgnoreCase($domain, 'newhomesource.com')) {
             $planId = $html->find('#PlanId', 0)->value;
             $communityId = $html->find('#CommunityId', 0)->value;
@@ -258,6 +199,8 @@ class PropertyController extends Controller
                 } else if (StringUtil::containsIgnoreCase($text, 'Bathrooms')) {//浴室数
                     $bathrooms = str_ireplace('Bathrooms', '', $text);
                     $bathrooms = str_replace(' ', '', $bathrooms);
+                    $bathFull = intval($bathrooms);
+                    $bathHalf = intval($bathrooms) == $bathrooms ? 0 : 1;
                 } else if (StringUtil::containsIgnoreCase($text, 'sq.ft.')) {//面积
                     $lotSqFt = str_ireplace('sq.ft.', '', $text);
                     $lotSqFt = str_replace(',', '', $lotSqFt);
@@ -274,26 +217,38 @@ class PropertyController extends Controller
             $obj = json_decode($jsonStr);
             $lat = $obj->Geo->latitude;
             $lng = $obj->Geo->longitude;
-            $location = "GeomFromText('POINT($lng $lat)')";
-
+            $addressRes = $httpClient->get("http://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng");
+            $addressJson = json_decode($addressRes->getBody()->getContents());
+            if ($addressJson->status == 'OK') {
+                $addressObj = GoogleGeoHelper::getAddress($addressJson->results);
+            }
+            if ($addressObj) {
+                $state = $addressObj->state;
+                $county = $addressObj->county;
+                $city = $addressObj->city;
+                $address = "$addressObj->streetNumber $addressObj->street";
+                $postalCode = $addressObj->postalCode;
+                $location = "GeomFromText('POINT($addressObj->lng $addressObj->lat)')";
+            }
             $html->clear();
             return view('property.create', [
-                'DataSourceId' => 1002,
+                'DataSourceId' => 1001,
                 'DataId' => $dataId,
                 'ReferenceUrl' => $request->ref_url,
                 'ListPrice' => str_replace(',', '', str_replace('$', '', $listPrice)),
                 'PhotoUrls' => implode(',', $photoUrls),
                 'Bedrooms' => $bedrooms,
-                'BathFull' => $bathrooms,
+                'BathFull' => $bathFull,
+                'BathHalf' => $bathHalf,
                 'LotSqFt' => $lotSqFt,
                 'GarageSpaces' => $garageSpaces,
                 'Description' => $description,
                 'PropertyType' => '',
-                'State' => '',
-                'County' => '',
-                'City' => '',
-                'Address' => '',
-                'PostalCode' => '',
+                'State' => $state,
+                'County' => $county,
+                'City' => $city,
+                'Address' => $address,
+                'PostalCode' => $postalCode,
                 'Location' => $location
             ]);
         } else {
@@ -306,6 +261,7 @@ class PropertyController extends Controller
                 'PhotoUrls' => '',
                 'Bedrooms' => '',
                 'BathFull' => '',
+                'BathHalf' => '',
                 'LotSqFt' => '',
                 'GarageSpaces' => '',
                 'Description' => '',
@@ -317,6 +273,47 @@ class PropertyController extends Controller
                 'PostalCode' => '',
                 'Location' => ''
             ])->withErrors('Not supported data source.');
+        }
+    }
+
+    /**
+     * 通过MLSID或第三方网站URL获取房源
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @throws \Exception
+     */
+    public function fetch(Request $request)
+    {
+        $this->validate($request, [
+            'type' => 'required',
+            'q' => 'required'
+        ]);
+        //搜索内容
+        $q = trim($request->q);
+        //判断搜索类型
+        if ($request->type == 0) {//MLSID
+            $record = Property::where('MLSNumber', $q)->first();
+            if ($record) {
+                //return view('property._detail', ['record' => $record]);
+                $view = view('property._detail', ['record' => $record]);
+                return response()->json(['reocrd' => $record, 'view' => $view]);
+            }
+            throw new Exception('未找到！');
+        } else if ($request->type == 1) {//URL
+            $domain = UrlUtil::getMainDomain($q);
+            if (StringUtil::equalsIgnoreCase($domain, 'loopnet.com')) {
+                $record = Util::parseLoopnetProperty($q);
+                $view = view('property._detail', ['record' => $record])->render();
+                return response()->json(['record' => $record, 'view' => $view]);
+            } else if (StringUtil::equalsIgnoreCase($domain, 'newhomesource.com')) {
+                $record = Util::parseNewhomesourceProperty($q);
+                $view = view('property._detail', ['record' => $record])->render();
+                return response()->json(['record' => $record, 'view' => $view]);
+            } else {
+                throw new Exception('您输入的网站URL暂不支持！');
+            }
+        } else {
+            throw new Exception('搜索类型错误！');
         }
     }
 }

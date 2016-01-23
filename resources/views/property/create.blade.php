@@ -6,22 +6,22 @@
     <br>
     <br>
     @include('partial._error')
-    <fieldset>
-        <legend>从第三方网站采集</legend>
-        <form method="POST" action="/properties/ref">
-            {!! csrf_field() !!}
-            <input type="text" name="ref_url" placeholder="Url"/>
-            <button type="submit">获取</button>
-        </form>
-        <div>
-            <p>如：</p>
+    {{--<fieldset>--}}
+        {{--<legend>从第三方网站采集</legend>--}}
+        {{--<form method="POST" action="/properties/ref">--}}
+            {{--{!! csrf_field() !!}--}}
+            {{--<input type="text" name="ref_url" placeholder="Url"/>--}}
+            {{--<button type="submit">获取</button>--}}
+        {{--</form>--}}
+        {{--<div>--}}
+            {{--<p>如：</p>--}}
 
-            <p>http://www.loopnet.com/xNet/MainSite/Listing/Profile/Profile.aspx?LID=19566204</p>
+            {{--<p>http://www.loopnet.com/xNet/MainSite/Listing/Profile/Profile.aspx?LID=19566204</p>--}}
 
-            <p>http://www.newhomesource.com/homedetail/planid-1085116</p>
-        </div>
-    </fieldset>
-    <br>
+            {{--<p>http://www.newhomesource.com/homedetail/planid-1085116</p>--}}
+        {{--</div>--}}
+    {{--</fieldset>--}}
+    {{--<br>--}}
     <form method="POST" action="/properties">
         {!! csrf_field() !!}
         <label>DataSourceId</label>
@@ -79,7 +79,7 @@
         <label>BathsFull</label>
         <input type="text" name="BathsFull" placeholder="BathsFull" value="{{$BathFull}}"/>
         <label>BathsHalf</label>
-        <input type="text" name="BathsHalf" placeholder="BathsHalf"/><br><br>
+        <input type="text" name="BathsHalf" placeholder="BathsHalf" value="{{$BathHalf}}"/><br><br>
         <lable>GarageSpaces</lable>
         <input type="text" name="GarageSpaces" placeholder="GarageSpaces" value="{{$GarageSpaces}}"/>
         <lable>ParkingSpaces</lable>

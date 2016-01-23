@@ -1,3 +1,7 @@
-.imgList div{
-    float:left;
+.imgList div {
+    float: left;
+}
+
+fieldset {
+    margin: 20px 0;
 }

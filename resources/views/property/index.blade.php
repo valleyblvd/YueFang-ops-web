@@ -2,7 +2,7 @@
 
 @section('content')
     <h2>房源管理</h2>
-    <a href="/properties/create">添加（采集）</a>
+    <a href="/properties/create">添加</a>
     <table>
         <tbody>
         @foreach($records as $record)

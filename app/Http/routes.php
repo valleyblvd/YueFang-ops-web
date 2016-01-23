@@ -15,12 +15,13 @@ Route::get('/', function () {
     return Redirect::to('properties/customize');
 });
 
-Route::get('login','Auth\AuthController@getLogin');
-Route::post('login','Auth\AuthController@postLogin');
-Route::resource('properties/customize','Property\CustomizeController');
-Route::resource('properties/ext','Property\ExtController');
-Route::post('properties/ref','Property\PropertyController@getFromRef');
-Route::resource('properties','Property\PropertyController');
-Route::resource('res/banner','Res\BannerController');
-Route::resource('res/launch','Res\LaunchController');
-Route::resource('files','FileController');
+Route::get('login', 'Auth\AuthController@getLogin');
+Route::post('login', 'Auth\AuthController@postLogin');
+Route::resource('properties/customize', 'Property\CustomizeController');
+Route::resource('properties/ext', 'Property\ExtController');
+Route::post('properties/ref', 'Property\PropertyController@getFromRef');
+Route::get('properties/fetch', 'Property\PropertyController@fetch');
+Route::resource('properties', 'Property\PropertyController');
+Route::resource('res/banner', 'Res\BannerController');
+Route::resource('res/launch', 'Res\LaunchController');
+Route::resource('files', 'FileController');

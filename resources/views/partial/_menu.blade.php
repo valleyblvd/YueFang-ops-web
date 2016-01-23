@@ -1,6 +1,6 @@
 <dl>
     <dt>房源资源</dt>
-    <dd><a href="/properties">房源管理(采集)</a></dd>
+    <dd><a href="/properties">房源管理</a></dd>
     <dd><a href="/properties/customize">房源标注</a></dd>
     <dd><a href="/properties/ext">房源标签</a></dd>
     <dt>静态资源</dt>

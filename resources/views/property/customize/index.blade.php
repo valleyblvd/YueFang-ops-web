@@ -2,7 +2,7 @@
 
 @section('content')
     <h2>房源标注</h2>
-    <a href="/properties/customize/create">添加</a>
+    <a href="/properties/customize/create">标注</a>
     <table>
         <tbody>
         @foreach($records as $record)
