@@ -21,8 +21,7 @@ class CustomizeController extends Controller
      */
     public function index()
     {
-        $records = PropertyCustBiz::getAll();
-        return view('property.customize.index', ['records' => $records]);
+        return $this->toListView();
     }
 
     /**
@@ -32,7 +31,7 @@ class CustomizeController extends Controller
      */
     public function create()
     {
-        return view('property.customize.create', ['formats' => Utils::getResFormats(),'cats'=>PropertyBiz::getCats()]);
+        return $this->getCreateView();
     }
 
     /**
@@ -45,44 +44,51 @@ class CustomizeController extends Controller
     {
         $this->validate($request, [
             'formats' => 'required',
-            'sub_cat_id'=>'required|integer',
-            'title'=>'required'
+            'sub_cat_id' => 'required|integer',
+            'title' => 'required'
         ]);
 
-        $subCatId=$request->input('sub_cat_id');//TODO:检查sub_cat_id是否存在
+        $subCatId = $request->input('sub_cat_id');
         $relativePathPrefix = Utils::getPropCustImgPath($subCatId);
         $bannerCount = -1;
         $formats = $request->input('formats');
+        $listingID = $request->input('listingID');
 
-        $record = new PropertyCustomize();
-        $record->listingID=$request->input('listingID');;
-        $record->sub_cat_id=$subCatId;
-        $record->title=$request->input('title');
-        $record->lat=$request->input('lat');
-        $record->lng=$request->input('lng');
-        $record->address=$request->input('address');
-        $record->city=$request->input('city');
-        $record->state=$request->input('state');
-        $record->zipcode=$request->input('zipcode');
-        $record->img = $relativePathPrefix;
-        $record->format = implode(',', $formats);
+        //检查该listingID是否已经标注过
+        if ($listingID) {
+            if (PropertyCustomize::where('listingID', $listingID)->first() != null)
+                return $this->getCreateView()->withErrors('该房源已经标注过！');
+        }
+
+        $model = new PropertyCustomize();
+        $model->listingID = $listingID;
+        $model->sub_cat_id = $subCatId;
+        $model->title = $request->input('title');
+        $model->lat = $request->input('lat');
+        $model->lng = $request->input('lng');
+        $model->address = $request->input('address');
+        $model->city = $request->input('city');
+        $model->state = $request->input('state');
+        $model->zipcode = $request->input('zipcode');
+        $model->img = $relativePathPrefix;
+        $model->format = implode(',', $formats);
         foreach ($formats as $format) {
             $imgs = $request->input($format);//banner相对路径数组
             if (count($imgs) == 0)
-                return view('property.customize.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
+                return $this->getCreateView()->withErrors('您还没有上传图片！');
             if ($bannerCount > -1 && count($imgs) != $bannerCount) {
-                return view('property.customize.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
+                return $this->getCreateView()->withErrors('图片数量不一致！');
             }
             $bannerCount = count($imgs);
-            $record->num = count($imgs);
+            $model->num = count($imgs);
             foreach ($imgs as $key => $img) {
                 $ext = explode('.', $img)[1];
-                $record->ext = $ext;
+                $model->ext = $ext;
                 rename(env('UPLOAD_PATH_PREFIX') . $img, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
             }
         }
-        $record->save();
-        return Redirect::to('properties/customize');
+        $model->save();
+        return $this->toListView();
     }
 
     /**
@@ -110,7 +116,7 @@ class CustomizeController extends Controller
         $record = PropertyCustBiz::getOne($id);
         if ($record == null)
             return view('errors.404');
-        return view('property.customize.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'record' => $record]);
+        return $this->getEditView($record);
     }
 
     /**
@@ -124,46 +130,45 @@ class CustomizeController extends Controller
     {
         $this->validate($request, [
             'formats' => 'required',
-            'title'=>'required'
+            'title' => 'required'
         ]);
-
 
         $bannerCount = -1;
         $formats = $request->input('formats');
 
-        $record = PropertyCustomize::find($id);
-        if ($record == null)
+        $model = PropertyCustomize::find($id);
+        if ($model == null)
             return view('errors.404');
 
-        $relativePathPrefix=Utils::getPropCustImgPath($record->sub_cat_id);
+        $relativePathPrefix = Utils::getPropCustImgPath($model->sub_cat_id);
 
-        $record->listingID=$request->input('listingID');;
-        $record->title=$request->input('title');
-        $record->lat=$request->input('lat');
-        $record->lng=$request->input('lng');
-        $record->address=$request->input('address');
-        $record->city=$request->input('city');
-        $record->state=$request->input('state');
-        $record->zipcode=$request->input('zipcode');
-        $record->img = $relativePathPrefix;
-        $record->format = implode(',', $formats);
+        $model->listingID = $request->input('listingID');;
+        $model->title = $request->input('title');
+        $model->lat = $request->input('lat');
+        $model->lng = $request->input('lng');
+        $model->address = $request->input('address');
+        $model->city = $request->input('city');
+        $model->state = $request->input('state');
+        $model->zipcode = $request->input('zipcode');
+        $model->img = $relativePathPrefix;
+        $model->format = implode(',', $formats);
         foreach ($formats as $format) {
             $banners = $request->input($format);//banner相对路径数组
             if (count($banners) == 0)
-                return view('property.customize.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
+                return $this->getEditView($model->toViewModel())->withErrors('请您为选择的设备上传照片！');
             if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return view('property.customize.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
+                return $this->getEditView($model->toViewModel())->withErrors('各个设备照片数量不一致！');
             }
             $bannerCount = count($banners);
-            $record->num = count($banners);
+            $model->num = count($banners);
             foreach ($banners as $key => $banner) {
                 $ext = explode('.', $banner)[1];
-                $record->ext = $ext;
+                $model->ext = $ext;
                 rename(env('UPLOAD_PATH_PREFIX') . $banner, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
             }
         }
-        $record->save();
-        return Redirect::to('properties/customize');
+        $model->save();
+        return $this->toListView();
     }
 
     /**
@@ -175,6 +180,35 @@ class CustomizeController extends Controller
     public function destroy($id)
     {
         PropertyCustomize::destroy($id);
-        return Redirect::to('properties/customize');
+        return $this->toListView();
+    }
+
+    /**
+     * 转到列表页
+     * @return mixed
+     */
+    public function toListView()
+    {
+        $models = PropertyCustBiz::getAll();
+        return view('property.customize.index', ['models' => $models]);
+    }
+
+    /**
+     * 获取创建视图
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function getCreateView()
+    {
+        return view('property.customize.create', ['formats' => Utils::getResFormats(), 'cats' => PropertyBiz::getCats()]);
+    }
+
+    /**
+     * 获取编辑视图
+     * @param $model
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    private function getEditView($model)
+    {
+        return view('property.customize.edit', ['model' => $model, 'formats' => Utils::getResFormats()]);
     }
 }

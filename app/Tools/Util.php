@@ -2,6 +2,7 @@
 
 namespace App\Tools;
 
+use App\Exceptions\FunFangException;
 use App\Models\Property;
 use Exception;
 use GuzzleHttp;
@@ -20,12 +21,16 @@ class Util
         $httpClient = new GuzzleHttp\Client();
         try {
             $content = $httpClient->get($url)->getBody()->getContents();
-        } catch (Exception $e) {
-            throw new Exception("访问 $url 出错！");
+        } catch (GuzzleHttp\Exception\RequestException $e) {
+            throw new FunFangException("访问 $url 时出错！服务器可能被墙了，请联系管理员！:(");
         }
         $html->load($content);
 
-        $dataId = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0)->plaintext;
+        //对该页面进行简单的检查，判断是否有DataId
+        $dataIdEle = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0);
+        if(!$dataIdEle)
+            throw new FunFangException('您输入的URL可能不正确，解析失败！');
+        $dataId=$dataIdEle->plaintext;
         //先从数据库中查找
         if ($dataId) {
             $record = Property::where('DataSourceId', $dataSourceId)->where('DataId', $dataId)->first();
@@ -36,9 +41,9 @@ class Util
         //如果数据库中没有记录，从html中解析并保存到数据库
         //只采集特定类型房源
         $propertyType = $html->find('#topFSdata dd', 2)->plaintext;//房产类型
-        $specTypes=['Multifamily','Office','Industrial','Land','Residential Income'];
+        $specTypes=['Multifamily','Office','Industrial','Land','Residential Income'];//指定采集的房源类型
         if(!in_array($propertyType,$specTypes)){
-            throw new Exception('该类型的房源不采集哦！');
+            throw new FunFangException('暂不采集该类型的房源！');
         }
         $record = new Property();
         $record->DataSourceId = $dataSourceId;
@@ -103,12 +108,15 @@ class Util
         $httpClient = new GuzzleHttp\Client();
         try {
             $content = $httpClient->get($url)->getBody()->getContents();
-        } catch (Exception $e) {
-            throw new Exception("访问 $url 出错！");
+        } catch (GuzzleHttp\Exception\RequestException $e) {
+            throw new FunFangException("访问 $url 时出错！服务器可能被墙了，请联系管理员！:(");
         }
         $html->load($content);
 
-        $planId = $html->find('#PlanId', 0)->value;
+        $planIdEle = $html->find('#PlanId', 0);
+        if(!$planIdEle)
+            throw new FunFangException('您输入的URL可能不正确，解析失败！');
+        $planId=$planIdEle->value;
         //先从数据库中查找
         if ($planId) {
             $record = Property::where('DataSourceId', $dataSourceId)->where('DataId', $planId)->first();
@@ -179,7 +187,9 @@ class Util
             $record->State = $addressObj->state;
             $record->County = $addressObj->county;
             $record->City = $addressObj->city;
-            $record->Address = "$addressObj->streetNumber $addressObj->street";
+            $streetNumber=property_exists($addressObj,'streetNumber')?$addressObj->streetNumber:'';
+            $street=property_exists($addressObj,'street')?$addressObj->street:'';
+            $record->Address = "$streetNumber $street";
             $record->PostalCode = $addressObj->postalCode;
             $record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
         }

@@ -5,25 +5,25 @@
     <a href="/properties/customize/create">标注</a>
     <table>
         <tbody>
-        @foreach($records as $record)
+        @foreach($models as $model)
             <tr>
-                <td>{{$record->sub_cat_id}}</td>
-                <td>{{$record->title}}</td>
-                <td>{{$record->img}}</td>
-                <td>{{$record->ext}}</td>
-                <td>{{$record->format}}</td>
-                <td>{{$record->num}}</td>
-                <td>{{$record->lat}}</td>
-                <td>{{$record->lng}}</td>
-                <td>{{$record->address}}</td>
-                <td>{{$record->city}}</td>
-                <td>{{$record->state}}</td>
-                <td>{{$record->zipcode}}</td>
-                <td>{{$record->listingID}}</td>
-                <td><a href="/properties/customize/{{$record->id}}">查看</a></td>
-                <td><a href="/properties/customize/{{$record->id}}/edit">编辑</a></td>
+                <td>{{$model->sub_cat_id}}</td>
+                <td>{{$model->title}}</td>
+                <td>{{$model->img}}</td>
+                <td>{{$model->ext}}</td>
+                <td>{{$model->format}}</td>
+                <td>{{$model->num}}</td>
+                <td>{{$model->lat}}</td>
+                <td>{{$model->lng}}</td>
+                <td>{{$model->address}}</td>
+                <td>{{$model->city}}</td>
+                <td>{{$model->state}}</td>
+                <td>{{$model->zipcode}}</td>
+                <td>{{$model->listingID}}</td>
+                <td><a href="/properties/customize/{{$model->id}}">查看</a></td>
+                <td><a href="/properties/customize/{{$model->id}}/edit">编辑</a></td>
                 <td>
-                    <form method="POST" action="/properties/customize/{{$record->id}}"
+                    <form method="POST" action="/properties/customize/{{$model->id}}"
                           onsubmit="return confirm('您确定要删除吗？');">
                         {!! csrf_field() !!}
                         <input type="hidden" name="_method" value="DELETE" />

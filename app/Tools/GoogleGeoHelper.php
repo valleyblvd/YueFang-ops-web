@@ -11,7 +11,7 @@ class GoogleGeoHelper
             return null;
 
         foreach ($results as $result) {
-            if (in_array('street_address', $result->types)) {//找到存放街道地址的节点
+            if (in_array('street_address', $result->types) || in_array('route', $result->types)) {//找到存放街道地址的节点
                 return GoogleGeoHelper::parseResult($result);
             }
         }

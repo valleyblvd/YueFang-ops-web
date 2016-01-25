@@ -10,6 +10,7 @@ class Property extends Model
     protected $table = 'residences';
     protected $primaryKey = 'Id';
     public $timestamps = false;
+    //http://stackoverflow.com/questions/23136898/how-do-i-create-an-accessor-for-a-point-data-column-in-a-laravel-4-model
     protected $hidden = array(
         'HistoryId',
         'Location'

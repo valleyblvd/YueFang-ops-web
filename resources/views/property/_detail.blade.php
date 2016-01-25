@@ -1,4 +1,4 @@
-<div>Id : {{$record->Id}}</div>
+<div>ListingId : {{$record->Id}}</div>
 <div>DataSourceId : {{$record->DataSourceId}}</div>
 <div>DataId : {{$record->DataId}}</div>
 <div>MLSNumber : {{$record->MLSNumber}}</div>

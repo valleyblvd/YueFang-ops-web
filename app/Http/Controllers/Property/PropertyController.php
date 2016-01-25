@@ -299,7 +299,7 @@ class PropertyController extends Controller
                 return response()->json(['reocrd' => $record, 'view' => $view]);
             }
             throw new Exception('未找到！');
-        } else if ($request->type == 1) {//URL
+        } else if ($request->type == 1) {//第三方网站URL
             $domain = UrlUtil::getMainDomain($q);
             if (StringUtil::equalsIgnoreCase($domain, 'loopnet.com')) {
                 $record = Util::parseLoopnetProperty($q);
