@@ -106,10 +106,10 @@ class BannerController extends Controller
      */
     public function edit($id)
     {
-        $bannerRes = BannerResBiz::getOne($id);
-        if ($bannerRes == null)
+        $model = BannerResBiz::getOne($id);
+        if ($model == null)
             return view('errors.404');
-        return view('res.banner.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'banner' => $bannerRes]);
+        return view('res.banner.edit', ['id' => $id, 'formats' => Utils::getResFormats(), 'model' => $model]);
     }
 
     /**
@@ -144,9 +144,9 @@ class BannerController extends Controller
         foreach ($formats as $format) {
             $banners = $request->input($format);//banner相对路径数组
             if (count($banners) == 0)
-                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
+                return view('res.banner.edit', ['formats' => Utils::getResFormats()])->withErrors('您还没有上传图片！');
             if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return view('res.banner.create', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
+                return view('res.banner.edit', ['formats' => Utils::getResFormats()])->withErrors('图片数量不一致！');
             }
             $bannerCount = count($banners);
             $bannerRes->num = count($banners);

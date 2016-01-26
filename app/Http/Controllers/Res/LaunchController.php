@@ -121,10 +121,10 @@ class LaunchController extends Controller
      */
     public function edit($id)
     {
-        $record = LaunchResBiz::getOne($id);
-        if ($record == null)
+        $model = LaunchResBiz::getOne($id);
+        if ($model == null)
             return view('errors.404');
-        return view('res.launch.edit', ['id' => $id, 'formats' => $this->getResFormats(), 'record' => $record]);
+        return view('res.launch.edit', ['id' => $id, 'formats' => $this->getResFormats(), 'model' => $model]);
     }
 
     /**
@@ -143,46 +143,46 @@ class LaunchController extends Controller
             'url' => 'required_if:type,3'
         ]);
 
-        $record = LaunchRes::find($id);
-        if ($record == null)
+        $model = LaunchRes::find($id);
+        if ($model == null)
             return view('errors.404');
 
-        $record->url = $request->input('url');
-        $record->start_date = $request->input('start_date');
-        $record->end_date = $request->input('end_date');
-        $record->active = $request->input('active') ? 1 : 0;
-        if ($record->type == 3) {//home page html
-            $record->format = '';
-            $record->ext = 'html';
-            $record->num = count(explode(';', $request->input('url')));
-            $record->save();
+        $model->url = $request->input('url');
+        $model->start_date = $request->input('start_date');
+        $model->end_date = $request->input('end_date');
+        $model->active = $request->input('active') ? 1 : 0;
+        if ($model->type == 3) {//home page html
+            $model->format = '';
+            $model->ext = 'html';
+            $model->num = count(explode(';', $request->input('url')));
+            $model->save();
             $ver = ResourceVer::where('resource_name', 'homepage')->first();
             if ($ver != null) {
                 $ver->ver = time();
                 $ver->save();
             }
         } else {
-            $relativePathPrefix = Utils::getLaunchImgPath($record->type);
+            $relativePathPrefix = Utils::getLaunchImgPath($model->type);
             $bannerCount = -1;
-            $record->img = $relativePathPrefix;
+            $model->img = $relativePathPrefix;
             $formats = $request->input('formats');
-            $record->format = implode(',', $formats);
+            $model->format = implode(',', $formats);
             foreach ($formats as $format) {
                 $banners = $request->input($format);//banner相对路径数组
                 if (count($banners) == 0)
-                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
+                    return view('res.banner.edit', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
                 if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
+                    return view('res.banner.edit', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
                 }
                 $bannerCount = count($banners);
-                $record->num = count($banners);
+                $model->num = count($banners);
                 foreach ($banners as $key => $banner) {
                     $ext = explode('.', $banner)[1];
-                    $record->ext = $ext;
+                    $model->ext = $ext;
                     rename(env('UPLOAD_PATH_PREFIX') . $banner, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
                 }
             }
-            $record->save();
+            $model->save();
             $ver = ResourceVer::where('resource_name', 'launch_ver')->first();
             if ($ver != null) {
                 $ver->ver = time();
