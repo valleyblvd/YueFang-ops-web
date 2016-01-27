@@ -12,8 +12,8 @@ class Property extends Model
     public $timestamps = false;
     //http://stackoverflow.com/questions/23136898/how-do-i-create-an-accessor-for-a-point-data-column-in-a-laravel-4-model
     protected $hidden = array(
-        'HistoryId',
-        'Location'
+        'HistoryId'
+        //'Location'
     );
     public function fromRequest($request)
     {

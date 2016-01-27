@@ -14,7 +14,7 @@ class PropertyBiz
 
     public static function getByPage()
     {
-        return Property::paginate(10);
+        return Property::orderBy('Id','DESC')->paginate(10);
     }
 
     public static function getCats()

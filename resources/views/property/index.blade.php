@@ -11,6 +11,7 @@
                 <td>{{$record->DataSourceId}}</td>
                 <td>{{$record->DataId}}</td>
                 <td>{{$record->MLSNumber}}</td>
+                <td>{{$record->Location}}</td>
                 <td><a href="/properties/{{$record->Id}}">查看</a></td>
                 <td><a href="/properties/{{$record->Id}}/edit">编辑</a></td>
                 <td>

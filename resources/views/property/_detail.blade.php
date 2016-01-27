@@ -14,6 +14,7 @@
 <div>BathsFull : {{$record->BathsFull}}</div>
 <div>BathsHalf : {{$record->BathsHalf}}</div>
 <div>GarageSpaces : {{$record->GarageSpaces}}</div>
+<div>Location : {{$record->Location}}</div>
 <div style="max-width:600px;overflow: auto;white-space: nowrap;">
     @if($record->PhotoUrls)
         @foreach(explode(',',$record->PhotoUrls) as $url)
