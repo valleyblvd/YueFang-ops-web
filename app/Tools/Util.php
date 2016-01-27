@@ -20,17 +20,19 @@ class Util
         $html = new \simple_html_dom();
         $httpClient = new GuzzleHttp\Client();
         try {
-            $content = $httpClient->get($url)->getBody()->getContents();
+            $content = $httpClient->get($url, [
+                //'proxy' => 'tcp://qinhaoranwd:qqqqq11111@58.222.254.11:80'
+            ])->getBody()->getContents();
         } catch (GuzzleHttp\Exception\RequestException $e) {
-            throw new FunFangException("访问 $url 时出错！服务器可能被墙了，请联系管理员！:(");
+            throw new FunFangException("访问 $url 时出错！" . $e->getMessage());
         }
         $html->load($content);
 
         //对该页面进行简单的检查，判断是否有DataId
         $dataIdEle = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0);
-        if(!$dataIdEle)
+        if (!$dataIdEle)
             throw new FunFangException('您输入的URL可能不正确，解析失败！');
-        $dataId=$dataIdEle->plaintext;
+        $dataId = $dataIdEle->plaintext;
         //先从数据库中查找
         if ($dataId) {
             $record = Property::where('DataSourceId', $dataSourceId)->where('DataId', $dataId)->first();
@@ -41,8 +43,8 @@ class Util
         //如果数据库中没有记录，从html中解析并保存到数据库
         //只采集特定类型房源
         $propertyType = $html->find('#topFSdata dd', 2)->plaintext;//房产类型
-        $specTypes=['Multifamily','Office','Industrial','Land','Residential Income'];//指定采集的房源类型
-        if(!in_array($propertyType,$specTypes)){
+        $specTypes = ['Multifamily', 'Office', 'Industrial', 'Land', 'Residential Income'];//指定采集的房源类型
+        if (!in_array($propertyType, $specTypes)) {
             throw new FunFangException('暂不采集该类型的房源！');
         }
         $record = new Property();
@@ -107,16 +109,16 @@ class Util
         $html = new \simple_html_dom();
         $httpClient = new GuzzleHttp\Client();
         try {
-            $content = $httpClient->get($url)->getBody()->getContents();
+            $contents = $httpClient->get($url)->getBody()->getContents();
         } catch (GuzzleHttp\Exception\RequestException $e) {
-            throw new FunFangException("访问 $url 时出错！服务器可能被墙了，请联系管理员！:(");
+            throw new FunFangException("访问 $url 时出错！" . $e->getMessage());
         }
-        $html->load($content);
+        $html->load($contents);
 
         $planIdEle = $html->find('#PlanId', 0);
-        if(!$planIdEle)
+        if (!$planIdEle)
             throw new FunFangException('您输入的URL可能不正确，解析失败！');
-        $planId=$planIdEle->value;
+        $planId = $planIdEle->value;
         //先从数据库中查找
         if ($planId) {
             $record = Property::where('DataSourceId', $dataSourceId)->where('DataId', $planId)->first();
@@ -178,7 +180,7 @@ class Util
         $obj = json_decode($jsonStr);
         $lat = $obj->Geo->latitude;
         $lng = $obj->Geo->longitude;
-        $addressRes = $httpClient->get("http://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng");
+        $addressRes = $httpClient->get("http://ditu.google.cn//maps/api/geocode/json?latlng=$lat,$lng");
         $addressJson = json_decode($addressRes->getBody()->getContents());
         if ($addressJson->status == 'OK') {
             $addressObj = GoogleGeoHelper::getAddress($addressJson->results);
@@ -187,8 +189,8 @@ class Util
             $record->State = $addressObj->state;
             $record->County = $addressObj->county;
             $record->City = $addressObj->city;
-            $streetNumber=property_exists($addressObj,'streetNumber')?$addressObj->streetNumber:'';
-            $street=property_exists($addressObj,'street')?$addressObj->street:'';
+            $streetNumber = property_exists($addressObj, 'streetNumber') ? $addressObj->streetNumber : '';
+            $street = property_exists($addressObj, 'street') ? $addressObj->street : '';
             $record->Address = "$streetNumber $street";
             $record->PostalCode = $addressObj->postalCode;
             $record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
