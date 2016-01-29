@@ -76,7 +76,8 @@ class Util
             $record->City = $addressObj->city;
             $record->Address = "$addressObj->streetNumber $addressObj->street";
             $record->PostalCode = $addressObj->postalCode;
-            $record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
+            //$record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
+            $record->Location = "$addressObj->lng,$addressObj->lat";
         }
         $record->Description = '';//描述
         foreach ($html->find('.detailsModule') as $desc) {
@@ -193,7 +194,8 @@ class Util
             $street = property_exists($addressObj, 'street') ? $addressObj->street : '';
             $record->Address = "$streetNumber $street";
             $record->PostalCode = $addressObj->postalCode;
-            $record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
+            //$record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
+            $record->Location = "$addressObj->lng,$addressObj->lat";
         }
         $record->save();
         $html->clear();

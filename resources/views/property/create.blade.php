@@ -28,61 +28,49 @@
         <input type="text" name="DataSourceId" placeholder="DataSourceId" value="{{$DataSourceId}}"/>
         <label>DataId</label>
         <input type="text" name="DataId" placeholder="DataId" value="{{$DataId}}"/><br><br>
-        <label>ReferenceUrl</label>
+        <label>数据源Url</label>
         <input type="text" name="ReferenceUrl" placeholder="ReferenceUrl" value="{{$ReferenceUrl}}"/>
-        <label>PhotoUrls</label>
+        <label>照片Url（以逗号分开）</label>
         <input type="text" name="PhotoUrls" placeholder="PhotoUrls" value="{{$PhotoUrls}}"/>
         <label>MLSNumber</label>
         <input type="text" name="MLSNumber" placeholder="MLSNumber"/><br><br>
-        <label>Status</label>
-        <input type="text" name="Status" placeholder="Status"/>
-        <label>StatusEnum</label>
-        <input type="text" name="StatusEnum" placeholder="StatusEnum"/><br><br>
-        <label>SaleType</label>
-        <input type="text" name="SaleType" placeholder="SaleType"/>
-        <label>SaleTypeEnum</label>
-        <input type="text" name="SaleTypeEnum" placeholder="SaleTypeEnum"/><br><br>
-        <label>PropertyType</label>
-        <input type="text" name="PropertyType" placeholder="PropertyType" value="{{$PropertyType}}"/>
-        <label>PropertyTypeEnum</label>
-        <input type="text" name="PropertyTypeEnum" placeholder="PropertyTypeEnum"/><br><br>
-        <label>ListPrice</label>
+        <label>挂牌价</label>
         <input type="text" name="ListPrice" placeholder="ListPrice" value="{{$ListPrice}}"/>
-        <label>SalePrice</label>
+        <label>成交价</label>
         <input type="text" name="SalePrice" placeholder="SalePrice"/>
-        <label>State</label>
+        <label>州</label>
         <input type="text" name="State" placeholder="State" value="{{$State}}"/><br><br>
-        <label>County</label>
+        <label>县/郡</label>
         <input type="text" name="County" placeholder="County" value="{{$County}}"/>
-        <label>City</label>
+        <label>城市</label>
         <input type="text" name="City" placeholder="City" value="{{$City}}"/>
-        <label>Address</label>
+        <label>门牌号 街道名</label>
         <input type="text" name="Address" placeholder="Address" value="{{$Address}}"/><br><br>
-        <label>PostalCode</label>
+        <label>邮编</label>
         <input type="text" name="PostalCode" placeholder="PostalCode" value="{{$PostalCode}}"/>
-        <label>Area</label>
+        <label>社区名</label>
         <input type="text" name="Area" placeholder="Area"/>
-        <label>CrossStreets</label>
+        <label>相邻街道</label>
         <input type="text" name="CrossStreets" placeholder="CrossStreets"/><br><br>
-        <label>Location</label>
+        <label>经纬度</label>
         <input type="text" name="Location" placeholder="Location" value="{{$Location}}"/>
-        <label>Description</label>
+        <label>房源描述</label>
         <input type="text" name="Description" placeholder="Description" value="{{$Description}}"/>
-        <label>YearBuilt</label>
+        <label>修建时间</label>
         <input type="text" name="YearBuilt" placeholder="YearBuilt"/><br><br>
-        <label>LotSqFt</label>
+        <label>土地面积（SqFt:平方英尺）/label>
         <input type="text" name="LotSqFt" placeholder="LotSqFt" value="{{$LotSqFt}}"/>
-        <label>StructureSqFt</label>
+        <label>建筑面积</label>
         <input type="text" name="StructureSqFt" placeholder="StructureSqFt"/>
-        <label>Bedrooms</label>
+        <label>卧室数</label>
         <input type="text" name="Bedrooms" placeholder="Bedrooms" value="{{$Bedrooms}}"/><br><br>
-        <label>BathsFull</label>
+        <label>带浴缸的厕所数</label>
         <input type="text" name="BathsFull" placeholder="BathsFull" value="{{$BathFull}}"/>
-        <label>BathsHalf</label>
+        <label>不能洗澡的厕所数</label>
         <input type="text" name="BathsHalf" placeholder="BathsHalf" value="{{$BathHalf}}"/><br><br>
-        <lable>GarageSpaces</lable>
+        <lable>车库数</lable>
         <input type="text" name="GarageSpaces" placeholder="GarageSpaces" value="{{$GarageSpaces}}"/>
-        <lable>ParkingSpaces</lable>
+        <lable>车位数</lable>
         <input type="text" name="ParkingSpaces" placeholder="ParkingSpaces"/>
         <button type="submit">保存</button>
     </form>

@@ -4,6 +4,7 @@ namespace App\Logic;
 
 use App\Models\Property;
 use App\Models\PropertyCat;
+use Illuminate\Support\Facades\DB;
 
 class PropertyBiz
 {
