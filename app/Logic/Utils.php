@@ -54,34 +54,45 @@ class Utils
     {
         $img = 'images/';
         switch ($subCatId) {
+            /* 1 留学房源 */
             case 1:
             case 2:
             case 3:
             case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
             case 15:
                 $img .= 'edu/yiju';
                 break;
+            /* 2 景点房源 */
+            case 5:
+            case 6:
+            case 7:
+                $img .= 'viewport/jing';
+                break;
+            /* 3 宜居房源 */
+            case 8:
+            case 9:
+                $img .= 'livable/yiju';
+                break;
+            /* 4 高收益房源 */
+            case 10:
+            case 11:
+                $img .= 'highyield/gao';
+                break;
+            /* 5 美国景色 */
             case 12:
                 $img .= 'landscape/Disney';
                 break;
             case 13:
-                $img.='landscape/SiliconValley';
+                $img .= 'landscape/SiliconValley';
                 break;
             case 14:
-                $img.='landscape/Hollywood';
+                $img .= 'landscape/Hollywood';
                 break;
             case 16:
-                $img.='landscape/Caltech';
+                $img .= 'landscape/Caltech';
                 break;
             case 17:
-                $img.='landscape/Stanford';
+                $img .= 'landscape/Stanford';
                 break;
         }
         return $img . '_' . time();

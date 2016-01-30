@@ -58,10 +58,10 @@
         <input type="text" name="Description" placeholder="Description" value="{{$Description}}"/>
         <label>修建时间</label>
         <input type="text" name="YearBuilt" placeholder="YearBuilt"/><br><br>
-        <label>土地面积（SqFt:平方英尺）/label>
+        <label>土地面积（SqFt:平方英尺）</label>
         <input type="text" name="LotSqFt" placeholder="LotSqFt" value="{{$LotSqFt}}"/>
         <label>建筑面积</label>
-        <input type="text" name="StructureSqFt" placeholder="StructureSqFt"/>
+        <input type="text" name="StructureSqFt" placeholder="StructureSqFt" value="{{$StructureSqFt}}"/>
         <label>卧室数</label>
         <input type="text" name="Bedrooms" placeholder="Bedrooms" value="{{$Bedrooms}}"/><br><br>
         <label>带浴缸的厕所数</label>

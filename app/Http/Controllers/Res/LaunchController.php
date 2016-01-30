@@ -21,7 +21,7 @@ class LaunchController extends Controller
      */
     public function index()
     {
-        return view('res.launch.index', ['records' => LaunchResBiz::getAll()]);
+        return view('res.launch.index', ['models' => LaunchResBiz::getAll()]);
     }
 
     /**
@@ -107,10 +107,7 @@ class LaunchController extends Controller
      */
     public function show($id)
     {
-        $record = LaunchResBiz::getOne($id);
-        if ($record == null)
-            return view('errors.404');
-        return view('res.launch.show', ['record' => $record]);
+        return view('res.launch.show', ['model' => LaunchResBiz::getOne($id)]);
     }
 
     /**
@@ -121,10 +118,9 @@ class LaunchController extends Controller
      */
     public function edit($id)
     {
-        $model = LaunchResBiz::getOne($id);
-        if ($model == null)
-            return view('errors.404');
-        return view('res.launch.edit', ['id' => $id, 'formats' => $this->getResFormats(), 'model' => $model]);
+        return view('res.launch.edit', [
+            'formats' => $this->getResFormats(),
+            'model' => LaunchResBiz::getOne($id)]);
     }
 
     /**

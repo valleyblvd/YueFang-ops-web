@@ -36,13 +36,13 @@
                 </select><br/><br/>
                 <lable>listingID</lable>
                 <input id="listingID" type="text" name="listingID" placeholder="listingID"/>
-                <label>title</label><input type="text" name="title" placeholder="标题" required/><br/><br/>
-                <label>lat</label><input id="lat" type="text" name="lat" placeholder="lat"/>
-                <label>lng</label><input id="lng" type="text" name="lng" placeholder="lng"/><br/><br/>
-                <label>address</label><input id="address" type="text" name="address" placeholder="地址"/>
-                <label>city</label><input id="city" type="text" name="city" placeholder="城市"/><br/><br/>
-                <label>state</label><input id="state" type="text" name="state" placeholder="州"/>
-                <label>zipcode</label><input id="zipcode" type="text" name="zipcode" placeholder="邮编"/>
+                <label>标题：</label><input type="text" name="title" placeholder="标题" required/><br/><br/>
+                <label>纬度：</label><input id="lat" type="text" name="lat" placeholder="纬度"/>
+                <label>经度：</label><input id="lng" type="text" name="lng" placeholder="经度"/><br/><br/>
+                <label>地址</label><input id="address" type="text" name="address" placeholder="地址"/>
+                <label>城市</label><input id="city" type="text" name="city" placeholder="城市"/><br/><br/>
+                <label>州</label><input id="state" type="text" name="state" placeholder="州"/>
+                <label>邮编</label><input id="zipcode" type="text" name="zipcode" placeholder="邮编"/>
                 <hr/>
                 @include('res._checkFormatField')
                 <button type="submit" style="float:right;">保存</button>
@@ -59,13 +59,13 @@
             },
             success: function (data) {
                 $('#searchResult').html(data.view);
-                $('#listingID').val(data.record.Id);
-                $('#lat').val(data.record.Lat);
-                $('#lng').val(data.record.Lng);
-                $('#address').val(data.record.Address);
-                $('#city').val(data.record.City);
-                $('#state').val(data.record.State);
-                $('#zipcode').val(data.record.PostalCode);
+                $('#listingID').val(data.model.Id);
+                $('#lat').val(data.model.Lat);
+                $('#lng').val(data.model.Lng);
+                $('#address').val(data.model.Address);
+                $('#city').val(data.model.City);
+                $('#state').val(data.model.State);
+                $('#zipcode').val(data.model.PostalCode);
             },
             complete: function () {
                 $('#searchBtn').removeAttr('disabled');

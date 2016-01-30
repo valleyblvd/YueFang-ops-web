@@ -164,9 +164,9 @@ class Util
                 $record->BathsFull = intval($bathrooms);
                 $record->BathsHalf = intval($bathrooms) == $bathrooms ? 0 : 1;
             } else if (StringUtil::containsIgnoreCase($text, 'sq.ft.')) {//面积
-                $lotSqFt = str_ireplace('sq.ft.', '', $text);
-                $lotSqFt = str_replace(',', '', $lotSqFt);
-                $record->LotSqFt = $lotSqFt;
+                $structureSqFt = str_ireplace('sq.ft.', '', $text);
+                $structureSqFt = str_replace(',', '', $structureSqFt);
+                $record->StructureSqFt = $structureSqFt;
             } else if (StringUtil::containsIgnoreCase($text, 'Garages')) {//停车位
                 $garageSpaces = str_ireplace('Garages', '', $text);
                 $garageSpaces = str_replace(' ', '', $garageSpaces);

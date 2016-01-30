@@ -2,7 +2,7 @@
 
 @section('content')
     <h2>房源标注</h2>
-    <a href="/properties/customize/create">标注</a>
+    <a href="/properties/customize/create">采集/标注</a>
     <table>
         <tbody>
         @foreach($models as $model)
@@ -26,7 +26,7 @@
                     <form method="POST" action="/properties/customize/{{$model->id}}"
                           onsubmit="return confirm('您确定要删除吗？');">
                         {!! csrf_field() !!}
-                        <input type="hidden" name="_method" value="DELETE" />
+                        <input type="hidden" name="_method" value="DELETE"/>
                         <button type="submit">删除</button>
                     </form>
                 </td>

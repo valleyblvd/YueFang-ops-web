@@ -47,6 +47,7 @@ class PropertyController extends Controller
             'BathFull' => '',
             'BathHalf' => '',
             'LotSqFt' => '',
+            'StructureSqFt'=>'',
             'GarageSpaces' => '',
             'Description' => '',
             'PropertyType' => '',

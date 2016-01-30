@@ -8,10 +8,10 @@
         {!! csrf_field() !!}
         <div>
             <select name="type" onchange="changeType(this)">
-                <option value="0" selected>launch screen image</option>
-                <option value="1">launch ad image</option>
-                <option value="2">guide image</option>
-                <option value="3">home page html</option>
+                <option value="0" selected>启动屏幕图片（iOS跳过）</option>
+                <option value="1">启动广告图片</option>
+                <option value="2">引导图片</option>
+                <option value="3">首页Html</option>
             </select>
         </div>
         <div id="formatWrapper">
