@@ -37,27 +37,7 @@ class PropertyController extends Controller
      */
     public function create()
     {
-        return view('property.create', [
-            'DataSourceId' => '',
-            'DataId' => '',
-            'ReferenceUrl' => '',
-            'ListPrice' => '',
-            'PhotoUrls' => '',
-            'Bedrooms' => '',
-            'BathFull' => '',
-            'BathHalf' => '',
-            'LotSqFt' => '',
-            'StructureSqFt'=>'',
-            'GarageSpaces' => '',
-            'Description' => '',
-            'PropertyType' => '',
-            'State' => '',
-            'County' => '',
-            'City' => '',
-            'Address' => '',
-            'PostalCode' => '',
-            'Location' => ''
-        ]);
+        return $this->getCreateView();
     }
 
     /**
@@ -98,7 +78,7 @@ class PropertyController extends Controller
      */
     public function edit($id)
     {
-        return view('property.edit', ['record' => PropertyBiz::getOne($id)]);
+        return view('property.edit', ['model' => PropertyBiz::getOne($id)]);
     }
 
     /**
@@ -195,5 +175,10 @@ class PropertyController extends Controller
         } else {
             throw new Exception('搜索类型错误！');
         }
+    }
+
+    private function getCreateView()
+    {
+        return view('property.create', ['model' => Property::getEmptyViewModel()]);
     }
 }

@@ -6,27 +6,6 @@
     @include('partial._error')
     <form class="hasFormatField" method="POST" action="/res/launch">
         {!! csrf_field() !!}
-        <div>
-            <select name="type" onchange="changeType(this)">
-                <option value="0" selected>启动屏幕图片（iOS跳过）</option>
-                <option value="1">启动广告图片</option>
-                <option value="2">引导图片</option>
-                <option value="3">首页Html</option>
-            </select>
-        </div>
-        <div id="formatWrapper">
-            @include('res._checkFormatField')
-        </div>
-        <input type="text" name="url" placeholder="url"/>
-        <input type="text" name="start_date" placeholder="开始日期(必填)" required/>
-        <input type="text" name="end_date" placeholder="结束日期(必填)" required/>
-        <label><input type="checkbox" name="active"/>启用</label>
-        <button type="submit">保存</button>
+        @include('res.launch._form')
     </form>
-@endsection
-
-@section('js')
-    <script>
-
-    </script>
 @endsection

@@ -6,13 +6,13 @@
     <table>
         <thead>
         <tr>
-            <td>类型</td>
-            <td>平台</td>
-            <td>开始日期</td>
-            <td>结束日期</td>
-            <td>启用</td>
-            <td colspan="3">
-            </td>
+            <th>类型</th>
+            <th>平台</th>
+            <th>开始日期</th>
+            <th>结束日期</th>
+            <th>启用</th>
+            <th colspan="3">
+            </th>
         </tr>
         </thead>
         <tbody>

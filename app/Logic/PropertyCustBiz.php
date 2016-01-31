@@ -14,9 +14,6 @@ class PropertyCustBiz
 
     public static function getOne($id)
     {
-        $model = PropertyCustomize::find($id);
-        if ($model == null)
-            return null;
-        return $model->toViewModel();
+        return PropertyCustomize::findOrFail($id)->toViewModel();
     }
 }

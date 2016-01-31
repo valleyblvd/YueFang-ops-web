@@ -11,7 +11,7 @@ class LaunchRes extends Model
     public function toViewModel()
     {
         $this->type_display = $this->getTypeDisplay($this->type);
-        $this->active_display = $this->active ? '是' : '否';
+        $this->active_display = $this->active ? '已启用' : '未启用';
         $formats = [];
         $resources = [];
         if ($this->type != 3) {
@@ -33,6 +33,22 @@ class LaunchRes extends Model
         $this->formats = $formats;
         $this->resources = $resources;
         return $this;
+    }
+
+    public static function getEmptyViewModel()
+    {
+        $emptyViewModel = new \stdClass();
+        $emptyViewModel->id = '';
+        $emptyViewModel->type = '';
+        $emptyViewModel->type_display = '';
+        $emptyViewModel->url = '';
+        $emptyViewModel->start_date = '';
+        $emptyViewModel->end_date = '';
+        $emptyViewModel->active_display = '';
+        $emptyViewModel->formats = [];
+        $emptyViewModel->resources = [];
+        $emptyViewModel->active = '';
+        return $emptyViewModel;
     }
 
     private function getTypeDisplay($type)

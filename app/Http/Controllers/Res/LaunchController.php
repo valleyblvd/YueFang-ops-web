@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Res;
 
+use App\Exceptions\FunFangException;
+use App\Logic\Common;
 use App\Logic\LaunchResBiz;
 use App\Logic\Utils;
 use App\Models\LaunchRes;
@@ -31,7 +33,7 @@ class LaunchController extends Controller
      */
     public function create()
     {
-        return view('res.launch.create', ['formats' => $this->getResFormats()]);
+        return $this->getCreateView();
     }
 
     /**
@@ -52,17 +54,17 @@ class LaunchController extends Controller
 
         $type = $request->input('type');
 
-        $record = new LaunchRes();
-        $record->type = $type;
-        $record->url = $request->input('url');
-        $record->start_date = $request->input('start_date');
-        $record->end_date = $request->input('end_date');
-        $record->active = $request->input('active') ? 1 : 0;
+        $model = new LaunchRes();
+        $model->type = $type;
+        $model->url = $request->input('url');
+        $model->start_date = $request->input('start_date');
+        $model->end_date = $request->input('end_date');
+        $model->active = $request->input('active') ? 1 : 0;
         if ($type == 3) {//home page html
-            $record->format = '';
-            $record->ext = 'html';
-            $record->num = count(explode(';', $request->input('url')));
-            $record->save();
+            $model->format = '';
+            $model->ext = 'html';
+            $model->num = count(explode(';', $request->input('url')));
+            $model->save();
             $ver = ResourceVer::where('resource_name', 'homepage')->first();
             if ($ver != null) {
                 $ver->ver = time();
@@ -70,26 +72,13 @@ class LaunchController extends Controller
             }
         } else {
             $relativePathPrefix = Utils::getLaunchImgPath($type);
-            $bannerCount = -1;
-            $record->img = $relativePathPrefix;
-            $formats = $request->input('formats');
-            $record->format = implode(',', $formats);
-            foreach ($formats as $format) {
-                $imgs = $request->input($format);//img相对路径数组
-                if (count($imgs) == 0)
-                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
-                if ($bannerCount > -1 && count($imgs) != $bannerCount) {
-                    return view('res.banner.create', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
-                }
-                $bannerCount = count($imgs);
-                $record->num = count($imgs);
-                foreach ($imgs as $key => $img) {
-                    $ext = explode('.', $img)[1];
-                    $record->ext = $ext;
-                    rename(env('UPLOAD_PATH_PREFIX') . $img, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
-                }
+            $model->img = $relativePathPrefix;
+            try {
+                Common::handleFormats($request, $model, $relativePathPrefix);
+            } catch (FunFangException $e) {
+                return $this->getCreateView()->withErrors($e->getMessage());
             }
-            $record->save();
+            $model->save();
             $ver = ResourceVer::where('resource_name', 'launch_ver')->first();
             if ($ver != null) {
                 $ver->ver = time();
@@ -159,24 +148,11 @@ class LaunchController extends Controller
             }
         } else {
             $relativePathPrefix = Utils::getLaunchImgPath($model->type);
-            $bannerCount = -1;
             $model->img = $relativePathPrefix;
-            $formats = $request->input('formats');
-            $model->format = implode(',', $formats);
-            foreach ($formats as $format) {
-                $banners = $request->input($format);//banner相对路径数组
-                if (count($banners) == 0)
-                    return view('res.banner.edit', ['formats' => $this->getResFormats()])->withErrors('您还没有上传图片！');
-                if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                    return view('res.banner.edit', ['formats' => $this->getResFormats()])->withErrors('图片数量不一致！');
-                }
-                $bannerCount = count($banners);
-                $model->num = count($banners);
-                foreach ($banners as $key => $banner) {
-                    $ext = explode('.', $banner)[1];
-                    $model->ext = $ext;
-                    rename(env('UPLOAD_PATH_PREFIX') . $banner, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
-                }
+            try {
+                Common::handleFormats($request, $model, $relativePathPrefix);
+            } catch (FunFangException $e) {
+                return $this->getCreateView()->withErrors($e->getMessage());
             }
             $model->save();
             $ver = ResourceVer::where('resource_name', 'launch_ver')->first();
@@ -209,5 +185,13 @@ class LaunchController extends Controller
         $formats[] = ['id' => 'ip6', 'name' => 'iPhone 6'];
         $formats[] = ['id' => 'ip6p', 'name' => 'iPhone 6 Plus'];
         return $formats;
+    }
+
+    private function getCreateView()
+    {
+        return view('res.launch.create', [
+            'model' => LaunchRes::getEmptyViewModel(),
+            'formats' => $this->getResFormats()
+        ]);
     }
 }

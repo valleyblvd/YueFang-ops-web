@@ -11,17 +11,17 @@ class PropertyCustomize extends Model
 
     public function toViewModel()
     {
-        $viewModel=new \stdClass();
+        $viewModel = new \stdClass();
         $viewModel->id = $this->id;
         $viewModel->sub_cat_id = $this->sub_cat_id;
         $viewModel->title = $this->title;
         $viewModel->lat = $this->lat;
         $viewModel->lng = $this->lng;
-        $viewModel->address=$this->address;
-        $viewModel->city=$this->city;
-        $viewModel->state=$this->state;
-        $viewModel->zipcode=$this->zipcode;
-        $viewModel->listingID=$this->listingID;
+        $viewModel->address = $this->address;
+        $viewModel->city = $this->city;
+        $viewModel->state = $this->state;
+        $viewModel->zipcode = $this->zipcode;
+        $viewModel->listingID = $this->listingID;
         $viewModel->resources = [];
         $viewModel->formats = [];
 
@@ -42,5 +42,24 @@ class PropertyCustomize extends Model
             $viewModel->resources[] = $resource;
         }
         return $viewModel;
+    }
+
+    public static function getEmptyViewModel()
+    {
+        $emptyViewModel = new \stdClass();
+        $emptyViewModel->id = '';
+        $emptyViewModel->sub_cat_id = '';
+        $emptyViewModel->title = '';
+        $emptyViewModel->lat = '';
+        $emptyViewModel->lng = '';
+        $emptyViewModel->address = '';
+        $emptyViewModel->city = '';
+        $emptyViewModel->state = '';
+        $emptyViewModel->zipcode = '';
+        $emptyViewModel->listingID = '';
+        $emptyViewModel->resources = [];
+        $emptyViewModel->formats = [];
+        return $emptyViewModel;
+
     }
 }

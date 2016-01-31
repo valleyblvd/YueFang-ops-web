@@ -19,7 +19,7 @@ class ExtController extends Controller
      */
     public function index()
     {
-        return view('property.ext.index',['records'=>PropertyExtBiz::getAll()]);
+        return view('property.ext.index', ['models' => PropertyExtBiz::getAll()]);
     }
 
     /**
@@ -29,13 +29,13 @@ class ExtController extends Controller
      */
     public function create()
     {
-        return view('property.ext.create');
+        return $this->getCreateView();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -56,30 +56,30 @@ class ExtController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return view('property.ext.show',['record'=>PropertyExtBiz::getOne($id)]);
+        return view('property.ext.show', ['record' => PropertyExtBiz::getOne($id)]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        return view('property.ext.edit', ['record' => PropertyExtBiz::getOne($id)]);
+        return view('property.ext.edit', ['model' => PropertyExtBiz::getOne($id)]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -99,12 +99,19 @@ class ExtController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         PropertyExtBiz::delete($id);
         return Redirect::to('properties/ext');
+    }
+
+    private function getCreateView()
+    {
+        return view('property.ext.create', [
+            'model' => PropertyExt::getEmptyViewModel()
+        ]);
     }
 }

@@ -9,7 +9,9 @@ class PropertyExtBiz
 {
     public static function getAll()
     {
-        return PropertyExt::all();
+        return PropertyExt::all()->map(function ($model) {
+            return $model->toViewModel();
+        });
     }
 
     public static function getOne($id)

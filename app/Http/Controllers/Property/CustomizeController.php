@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Exceptions\FunFangException;
+use App\Logic\Common;
 use App\Logic\PropertyBiz;
 use App\Logic\PropertyCustBiz;
 use App\Logic\Utils;
@@ -10,7 +12,6 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
 
 class CustomizeController extends Controller
 {
@@ -50,8 +51,6 @@ class CustomizeController extends Controller
 
         $subCatId = $request->input('sub_cat_id');
         $relativePathPrefix = Utils::getPropCustImgPath($subCatId);
-        $bannerCount = -1;
-        $formats = $request->input('formats');
         $listingID = $request->input('listingID');
 
         //检查该listingID是否已经标注过
@@ -71,21 +70,10 @@ class CustomizeController extends Controller
         $model->state = $request->input('state');
         $model->zipcode = $request->input('zipcode');
         $model->img = $relativePathPrefix;
-        $model->format = implode(',', $formats);
-        foreach ($formats as $format) {
-            $imgs = $request->input($format);//banner相对路径数组
-            if (count($imgs) == 0)
-                return $this->getCreateView()->withErrors('您还没有上传图片！');
-            if ($bannerCount > -1 && count($imgs) != $bannerCount) {
-                return $this->getCreateView()->withErrors('图片数量不一致！');
-            }
-            $bannerCount = count($imgs);
-            $model->num = count($imgs);
-            foreach ($imgs as $key => $img) {
-                $ext = explode('.', $img)[1];
-                $model->ext = $ext;
-                rename(env('UPLOAD_PATH_PREFIX') . $img, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
-            }
+        try {
+            Common::handleFormats($request, $model, $relativePathPrefix);
+        } catch (FunFangException $e) {
+            return $this->getCreateView()->withErrors($e->getMessage());
         }
         $model->save();
         return $this->toListView();
@@ -100,8 +88,6 @@ class CustomizeController extends Controller
     public function show($id)
     {
         $record = PropertyCustBiz::getOne($id);
-        if ($record == null)
-            return view('errors.404');
         return view('property.customize.show', ['record' => $record]);
     }
 
@@ -114,8 +100,6 @@ class CustomizeController extends Controller
     public function edit($id)
     {
         $record = PropertyCustBiz::getOne($id);
-        if ($record == null)
-            return view('errors.404');
         return $this->getEditView($record);
     }
 
@@ -130,17 +114,16 @@ class CustomizeController extends Controller
     {
         $this->validate($request, [
             'formats' => 'required',
-            'title' => 'required'
+            'title' => 'required',
+            'sub_cat_id' => 'required|integer'
         ]);
-
-        $bannerCount = -1;
-        $formats = $request->input('formats');
 
         $model = PropertyCustomize::find($id);
         if ($model == null)
             return view('errors.404');
 
-        $relativePathPrefix = Utils::getPropCustImgPath($model->sub_cat_id);
+        $subCatId = $request->input('sub_cat_id');
+        $relativePathPrefix = Utils::getPropCustImgPath($subCatId);
 
         $model->listingID = $request->input('listingID');;
         $model->title = $request->input('title');
@@ -151,21 +134,10 @@ class CustomizeController extends Controller
         $model->state = $request->input('state');
         $model->zipcode = $request->input('zipcode');
         $model->img = $relativePathPrefix;
-        $model->format = implode(',', $formats);
-        foreach ($formats as $format) {
-            $banners = $request->input($format);//banner相对路径数组
-            if (count($banners) == 0)
-                return $this->getEditView($model->toViewModel())->withErrors('请您为选择的设备上传照片！');
-            if ($bannerCount > -1 && count($banners) != $bannerCount) {
-                return $this->getEditView($model->toViewModel())->withErrors('各个设备照片数量不一致！');
-            }
-            $bannerCount = count($banners);
-            $model->num = count($banners);
-            foreach ($banners as $key => $banner) {
-                $ext = explode('.', $banner)[1];
-                $model->ext = $ext;
-                rename(env('UPLOAD_PATH_PREFIX') . $banner, env('UPLOAD_PATH_PREFIX') . $relativePathPrefix . '_' . $format . '_' . ($key + 1) . '.' . $ext);
-            }
+        try {
+            Common::handleFormats($request, $model, $relativePathPrefix);
+        } catch (FunFangException $e) {
+            return $this->getCreateView()->withErrors($e->getMessage());
         }
         $model->save();
         return $this->toListView();
@@ -199,7 +171,11 @@ class CustomizeController extends Controller
      */
     private function getCreateView()
     {
-        return view('property.customize.create', ['formats' => Utils::getResFormats(), 'cats' => PropertyBiz::getCats()]);
+        return view('property.customize.create', [
+            'model' => PropertyCustomize::getEmptyViewModel(),
+            'formats' => Utils::getResFormats(),
+            'cats' => PropertyBiz::getCats()
+        ]);
     }
 
     /**
@@ -209,6 +185,10 @@ class CustomizeController extends Controller
      */
     private function getEditView($model)
     {
-        return view('property.customize.edit', ['model' => $model, 'formats' => Utils::getResFormats()]);
+        return view('property.customize.edit', [
+            'model' => $model,
+            'formats' => Utils::getResFormats(),
+            'cats' => PropertyBiz::getCats()
+        ]);
     }
 }

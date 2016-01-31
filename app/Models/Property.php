@@ -17,6 +17,7 @@ class Property extends Model
     /*开始Geometry的处理*/
     protected $geometryFields = ['Location'];
     protected $geometryAsText = true;
+
     public function setLocationAttribute($value)
     {
         $this->attributes['Location'] = DB::raw("POINT($value)");
@@ -41,6 +42,7 @@ class Property extends Model
         }
         return parent::newQuery($excludeDeleted);
     }
+
     /*结束Geometry的处理*/
 
     public function fromRequest($request)
@@ -73,5 +75,30 @@ class Property extends Model
         $this->Bedrooms = $request->input("Bedrooms");
         $this->BathsFull = $request->input("BathsFull");
         $this->BathsHalf = $request->input("BathsHalf");
+    }
+
+    public static function getEmptyViewModel()
+    {
+        $emptyViewModel = new \stdClass();
+        $emptyViewModel->DataSourceId = '';
+        $emptyViewModel->DataId = '';
+        $emptyViewModel->ReferenceUrl = '';
+        $emptyViewModel->ListPrice = '';
+        $emptyViewModel->PhotoUrls = '';
+        $emptyViewModel->Bedrooms = '';
+        $emptyViewModel->BathFull = '';
+        $emptyViewModel->BathHalf = '';
+        $emptyViewModel->LotSqFt = '';
+        $emptyViewModel->StructureSqFt = '';
+        $emptyViewModel->GarageSpaces = '';
+        $emptyViewModel->Description = '';
+        $emptyViewModel->PropertyType = '';
+        $emptyViewModel->State = '';
+        $emptyViewModel->County = '';
+        $emptyViewModel->City = '';
+        $emptyViewModel->Address = '';
+        $emptyViewModel->PostalCode = '';
+        $emptyViewModel->Location = '';
+        return $emptyViewModel;
     }
 }

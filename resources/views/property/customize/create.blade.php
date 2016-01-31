@@ -26,26 +26,7 @@
         <div>
             <form class="hasFormatField" method="POST" action="/properties/customize">
                 {!! csrf_field() !!}
-                <select name="sub_cat_id">
-                    @foreach($cats as $cat)
-                        <optgroup label="{{$cat->name}}"></optgroup>
-                        @foreach($cat->subCats as $subCat)
-                            <option value="{{$subCat->id}}">{{$subCat->name}}</option>
-                        @endforeach
-                    @endforeach
-                </select><br/><br/>
-                <lable>listingID</lable>
-                <input id="listingID" type="text" name="listingID" placeholder="listingID"/>
-                <label>标题：</label><input type="text" name="title" placeholder="标题" required/><br/><br/>
-                <label>纬度：</label><input id="lat" type="text" name="lat" placeholder="纬度"/>
-                <label>经度：</label><input id="lng" type="text" name="lng" placeholder="经度"/><br/><br/>
-                <label>地址</label><input id="address" type="text" name="address" placeholder="地址"/>
-                <label>城市</label><input id="city" type="text" name="city" placeholder="城市"/><br/><br/>
-                <label>州</label><input id="state" type="text" name="state" placeholder="州"/>
-                <label>邮编</label><input id="zipcode" type="text" name="zipcode" placeholder="邮编"/>
-                <hr/>
-                @include('res._checkFormatField')
-                <button type="submit" style="float:right;">保存</button>
+                @include('property.customize._form')
             </form>
         </div>
     </fieldset>
