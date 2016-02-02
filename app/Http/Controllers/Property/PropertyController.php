@@ -28,6 +28,7 @@ class PropertyController extends Controller
     public function index()
     {
         return view('property.index', ['records' => PropertyBiz::getByPage()]);
+
     }
 
     /**

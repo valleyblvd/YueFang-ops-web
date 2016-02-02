@@ -21,7 +21,7 @@
             <div class="clearfix" style="clear:both;"></div>
         </div>
         <div style="clear:both;"></div>
-        <button type="button" class="uploadResBtn" onclick="uploadRes('{{$format['id']}}')">上传图片
+        <button type="button" class="uploadResBtn easyui-linkbutton" onclick="uploadRes('{{$format['id']}}')">上传图片
         </button>
     </div>
     <hr>

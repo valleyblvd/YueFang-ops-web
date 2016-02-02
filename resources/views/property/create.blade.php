@@ -1,7 +1,6 @@
 @extends('layouts.app')
-
+@section('pageTitle','添加房源')
 @section('content')
-    <h2>添加房源</h2>
     <a href="/properties">返回列表</a>
     <br>
     <br>

@@ -14,11 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blade::directive('break', function() {
+        Blade::directive('break', function () {
             return "<?php break; ?>";
         });
 
-        Blade::directive('continue', function() {
+        Blade::directive('continue', function () {
             return "<?php continue; ?>";
         });
     }

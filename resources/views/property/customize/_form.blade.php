@@ -1,20 +1,45 @@
-<select name="sub_cat_id">
-    @foreach($cats as $cat)
-        <optgroup label="{{$cat->name}}"></optgroup>
-        @foreach($cat->subCats as $subCat)
-            <option value="{{$subCat->id}}" {{$subCat->id==$model->sub_cat_id?'selected':''}}>{{$subCat->name}}</option>
-        @endforeach
-    @endforeach
-</select><br/><br/>
-<lable>listingID</lable>
-<input id="listingID" type="text" name="listingID" placeholder="listingID" value="{{$model->listingID}}"/>
-<label>标题：</label><input type="text" name="title" placeholder="标题" value="{{$model->title}}" required/><br/><br/>
-<label>纬度：</label><input id="lat" type="text" name="lat" placeholder="纬度" value="{{$model->lat}}"/>
-<label>经度：</label><input id="lng" type="text" name="lng" placeholder="经度" value="{{$model->lng}}"/><br/><br/>
-<label>地址</label><input id="address" type="text" name="address" placeholder="地址" value="{{$model->address}}"/>
-<label>城市</label><input id="city" type="text" name="city" placeholder="城市" value="{{$model->city}}"/><br/><br/>
-<label>州</label><input id="state" type="text" name="state" placeholder="州" value="{{$model->state}}"/>
-<label>邮编</label><input id="zipcode" type="text" name="zipcode" placeholder="邮编" value="{{$model->zipcode}}"/>
-<hr/>
-@include('res._checkFormatField')
-<button type="submit" style="float:right;">保存</button>
+<table cellpadding="5">
+    <tr>
+        <td colspan="2">
+            <select name="sub_cat_id">
+                @foreach($cats as $cat)
+                    <optgroup label="{{$cat->name}}"></optgroup>
+                    @foreach($cat->subCats as $subCat)
+                        <option value="{{$subCat->id}}" {{$subCat->id==$model->sub_cat_id?'selected':''}}>{{$subCat->name}}</option>
+                    @endforeach
+                @endforeach
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Listing ID：</td>
+        <td><input id="listingID" class="easyui-textbox" type="text" name="listingID" data-options="required:true"
+                   value="{{$model->listingID}}"/></td>
+        <td>标题：</td>
+        <td><input id="title" class="easyui-textbox" type="text" name="title" data-options="required:true"
+                   value="{{$model->title}}"/></td>
+    </tr>
+    <tr>
+        <td>经度：</td>
+        <td><input id="lng" class="easyui-textbox" type="text" name="lng" value="{{$model->lng}}"/></td>
+        <td>纬度：</td>
+        <td><input id="lat" class="easyui-textbox" type="text" name="lat" value="{{$model->lat}}"/></td>
+    </tr>
+    <tr>
+        <td>地址：</td>
+        <td><input id="address" class="easyui-textbox" type="text" name="address" value="{{$model->address}}"/></td>
+        <td>城市：</td>
+        <td><input id="city" class="easyui-textbox" type="text" name="city" value="{{$model->city}}"/></td>
+    </tr>
+    <tr>
+        <td>州：</td>
+        <td><input id="state" class="easyui-textbox" type="text" name="address" value="{{$model->state}}"/></td>
+        <td>邮编：</td>
+        <td><input id="zipcode" class="easyui-textbox" type="text" name="zipcode" value="{{$model->zipcode}}"/></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            @include('res._checkFormatField')
+        </td>
+    </tr>
+</table>

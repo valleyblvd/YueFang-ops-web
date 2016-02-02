@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('pageTitle','房源标注详情')
 @section('content')
     <a href="/properties/customize">返回列表</a>
     <a href="/properties/customize/{{$record->id}}/edit">编辑</a>

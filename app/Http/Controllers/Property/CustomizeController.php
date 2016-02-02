@@ -161,8 +161,8 @@ class CustomizeController extends Controller
      */
     public function toListView()
     {
-        $models = PropertyCustBiz::getAll();
-        return view('property.customize.index', ['models' => $models]);
+        //$models = PropertyCustBiz::getAll();
+        return view('property.customize.index');
     }
 
     /**
@@ -190,5 +190,16 @@ class CustomizeController extends Controller
             'formats' => Utils::getResFormats(),
             'cats' => PropertyBiz::getCats()
         ]);
+    }
+
+    /* API */
+    public function getAll()
+    {
+        return PropertyCustBiz::getAll();
+    }
+
+    public function delete($id)
+    {
+        PropertyCustomize::destroy($id);
     }
 }

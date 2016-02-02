@@ -1,7 +1,6 @@
 @extends('layouts.app')
-
+@section('pageTitle','编辑房源标注')
 @section('content')
-    <h2>编辑房源标注</h2>
     <a href="/properties/customize">返回列表</a>
     <form class="hasFormatField" method="POST" action="/properties/customize/{{$model->id}}">
         {!! csrf_field() !!}

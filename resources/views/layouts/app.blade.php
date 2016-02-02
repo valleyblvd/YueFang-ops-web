@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>悦房-资源管理系统</title>
+    <title>悦房 - @yield('pageTitle')</title>
     <link href="/css/normalize.css" type="text/css" rel="stylesheet"/>
     <link href="/lib/easyui/themes/{{\Illuminate\Support\Facades\Cookie::get('theme')?\Illuminate\Support\Facades\Cookie::get('theme'):'default'}}/easyui.css"
           type="text/css" rel="stylesheet"/>
     <link href="/lib/easyui/themes/icon.css" type="text/css" rel="stylesheet"/>
     <link href="/css/app.css" type="text/css" rel="stylesheet"/>
+    <link href="/css/easyui.ext.css" type="text/css" rel="stylesheet"/>
 </head>
 <body>
 <div class="easyui-layout" style="height: 100%;">
     <div data-options="region:'north'" style="height:50px">
-        悦房美居-资源管理系统
+        <h3>悦房美居 - 资源管理系统</h3>
     </div>
-    <div data-options="region:'west',split:true" title="West" style="width:200px;">
+    <div data-options="region:'west',split:true" title="菜单" style="width:200px;">
         @include('partial._menu')
     </div>
-    <div data-options="region:'center',title:'Main Title',iconCls:'icon-ok'">
+    <div data-options="region:'center',title:'@yield('pageTitle') '" style="padding: 10px;;">
         @yield('content')
     </div>
 </div>

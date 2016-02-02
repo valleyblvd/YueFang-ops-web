@@ -27,3 +27,8 @@ Route::resource('res/launch', 'Res\LaunchController');
 Route::resource('files', 'FileController');
 Route::post('setting/theme', 'Setting\SettingController@setTheme');
 Route::get('setting', 'Setting\SettingController@index');
+
+/* API */
+Route::get('api/properties/customize/delete/{id}', 'Property\CustomizeController@delete');
+Route::get('api/properties/customize', 'Property\CustomizeController@getAll');
+
