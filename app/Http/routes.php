@@ -25,3 +25,5 @@ Route::resource('properties', 'Property\PropertyController');
 Route::resource('res/banner', 'Res\BannerController');
 Route::resource('res/launch', 'Res\LaunchController');
 Route::resource('files', 'FileController');
+Route::post('setting/theme', 'Setting\SettingController@setTheme');
+Route::get('setting', 'Setting\SettingController@index');

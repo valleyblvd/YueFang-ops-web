@@ -11,7 +11,7 @@
                 <option value="0">MLSID</option>
                 <option value="1" selected>URL</option>
             </select>
-            <input name="q" type="text"/>
+            <input name="q" type="text" required/>
             <button id="searchBtn" type="submit">获取</button>
         </form>
     </fieldset>

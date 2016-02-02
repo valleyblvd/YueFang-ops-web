@@ -11,4 +11,6 @@
     <dd><a href="">经纪人(未开发)</a></dd>
     <dt>客户端</dt>
     <dd><a href="/clients">安装统计(未开发)</a></dd>
+    <dt>系统设置</dt>
+    <dd><a href="/setting">设置</a></dd>
 </dl>

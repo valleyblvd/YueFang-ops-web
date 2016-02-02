@@ -29,10 +29,14 @@ class Util
         $html->load($content);
 
         //对该页面进行简单的检查，判断是否有DataId
-        $dataIdEle = $html->find('#ProfileMainContent1_PropertyInfoFS1_lbPropertyID', 0);
-        if (!$dataIdEle)
+        $dataIdWrapper = $html->find('.property-timestamp', 0);
+        if (!$dataIdWrapper)
             throw new FunFangException('您输入的URL可能不正确，解析失败！');
-        $dataId = $dataIdEle->plaintext;
+        $dataId = $dataIdWrapper->find('td', 0)->plaintext;
+        $dataId = str_replace(' ', '', $dataId);
+        $dataId = str_replace('ListingID:', '', $dataId);
+        if (!$dataId)
+            throw new FunFangException('未找到房源ID！');
         //先从数据库中查找
         if ($dataId) {
             $record = Property::where('DataSourceId', $dataSourceId)->where('DataId', $dataId)->first();
@@ -42,29 +46,33 @@ class Util
 
         //如果数据库中没有记录，从html中解析并保存到数据库
         //只采集特定类型房源
-        $propertyType = $html->find('#topFSdata dd', 2)->plaintext;//房产类型
-        $specTypes = ['Multifamily', 'Office', 'Industrial', 'Land', 'Residential Income'];//指定采集的房源类型
-        if (!in_array($propertyType, $specTypes)) {
-            throw new FunFangException('暂不采集该类型的房源！');
-        }
         $record = new Property();
         $record->DataSourceId = $dataSourceId;
         $record->DataId = trim($dataId);
         $record->ReferenceUrl = $url;
 
-        $listPrice = $html->find('#topFSdata dd', 0)->plaintext;//价格
-        $record->ListPrice = str_replace(',', '', str_replace('$', '', $listPrice));
-        $lotSqFt = $html->find('#topFSdata dd', 1)->plaintext;//面积
-        $lotSqFt = str_ireplace('AC', '', $lotSqFt);
-        $lotSqFt = str_replace(' ', '', $lotSqFt);
-        $lotSqFt = $lotSqFt * 43560;
-        $record->LotSqFt = $lotSqFt;
-        $record->PropertyType = $propertyType;
-        //$locationSrc = $html->find('#ifMap', 0)->src;
-        //$lat = UrlUtil::getUrlParam($locationSrc, 'Lat');
-        //$lng = UrlUtil::getUrlParam($locationSrc, 'Long');
-        //$location = "$lat,$lng";
-        $addressStr = $html->find('#ProfileMainContent1_PropertyAddress1_litPropertyFullAddress', 0)->plaintext;
+        $propertyTds = $html->find('.property-data', 0)->find('td');
+        for ($i = 0; $i < count($propertyTds); $i = $i + 2) {
+            $dataType = trim($propertyTds[$i]->plaintext);
+            $dataValue = trim($propertyTds[$i + 1]->plaintext);
+            if (StringUtil::equalsIgnoreCase('Price', $dataType)) {//价格
+                $record->ListPrice = str_replace(',', '', str_replace('$', '', $dataValue));
+            } else if (StringUtil::equalsIgnoreCase('Property Type', $dataType)) {//房产类型
+                //指定采集的房源类型
+                $specTypes = ['Multifamily', 'Office', 'Industrial', 'Land', 'Residential Income'];
+                if (!in_array($dataValue, $specTypes)) {
+                    throw new FunFangException('暂不采集该类型的房源！');
+                }
+                $record->PropertyType = $dataValue;
+            } else if (StringUtil::equalsIgnoreCase('Lot Size', $dataType)) {//土地面积
+                $lotSqFt = str_ireplace('AC', '', $dataValue);
+                $lotSqFt = str_replace(' ', '', $lotSqFt);
+                $lotSqFt = $lotSqFt * 43560;
+                $record->LotSqFt = $lotSqFt;
+            }
+        }
+        $addressStr = $html->find('.basic-info', 0)->find('h1', 0)->plaintext;
+        $addressStr = str_replace('·', '', $addressStr);
         $addressRes = $httpClient->get('http://maps.googleapis.com/maps/api/geocode/json?address=' . $addressStr);
         $addressJson = json_decode($addressRes->getBody()->getContents());
         if ($addressJson->status == 'OK') {
@@ -79,21 +87,14 @@ class Util
             //$record->Location = DB::raw("GeomFromText('POINT($addressObj->lng $addressObj->lat)')");
             $record->Location = "$addressObj->lng,$addressObj->lat";
         }
-        $record->Description = '';//描述
-        foreach ($html->find('.detailsModule') as $desc) {
-            if ($desc->first_child()->plaintext == 'Description') {
-                foreach ($desc->find('p') as $p) {
-                    $record->Description .= $p->plaintext;
-                }
-                break;
-            }
-        }
-        $photos = $html->find('ul#wideCarousel>li>a.photo');//照片
+        $record->Description = $html->find('.description', 0)->find('.row', 1)->plaintext;//描述
+        $photos = $html->find('.carousel-wrapper', 0)->find('.carousel-inner', 0)->find('img');//照片
         $photoUrls = [];
         foreach ($photos as $photo) {
-            if (!StringUtil::equals($photo->href, '#')) {
-                array_push($photoUrls, $photo->href);
-            }
+            if($photo->src)
+                array_push($photoUrls, $photo->src);
+            else
+                array_push($photoUrls, $photo->getAttribute('lazy-src'));
         }
         $record->PhotoUrls = implode(',', $photoUrls);
         $record->save();
