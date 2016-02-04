@@ -2,3 +2,15 @@
     text-decoration: none;
 }
 
+td, th {
+    padding: 5px;
+}
+
+form td {
+    text-align: right;
+}
+
+#menu a {
+    display: block;
+    text-align: left;
+}

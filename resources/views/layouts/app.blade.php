@@ -14,10 +14,10 @@
     <div data-options="region:'north'" style="height:50px">
         <h3>悦房美居 - 资源管理系统</h3>
     </div>
-    <div data-options="region:'west',split:true" title="菜单" style="width:200px;">
+    <div data-options="region:'west',split:true" title="菜单" style="overflow: hidden;width: 200px;">
         @include('partial._menu')
     </div>
-    <div data-options="region:'center',title:'@yield('pageTitle') '" style="padding: 10px;;">
+    <div data-options="region:'center',title:'@yield('pageTitle') '" style="padding:1px;">
         @yield('content')
     </div>
 </div>
@@ -30,5 +30,8 @@
 <script src="/js/util.js"></script>
 <script src="/js/app.js"></script>
 @yield('js')
+<script>
+    $('body').show();
+</script>
 </body>
 </html>

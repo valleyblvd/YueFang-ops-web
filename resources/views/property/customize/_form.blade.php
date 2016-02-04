@@ -38,7 +38,7 @@
         <td><input id="zipcode" class="easyui-textbox" type="text" name="zipcode" value="{{$model->zipcode}}"/></td>
     </tr>
     <tr>
-        <td colspan="4">
+        <td colspan="4" style="text-align: left;">
             @include('res._checkFormatField')
         </td>
     </tr>

@@ -56,11 +56,13 @@
                 rownumbers: true,
                 singleSelect: true,
                 toolbar: toolbar,
+                striped: true,
+                fit: true,
                 columns: [[
                     {field: 'listingID', title: 'Listing ID'},
                     {field: 'title', title: '标题'},
                     {field: 'format', title: '设备'},
-                    {field: 'format', title: '地址'},
+                    {field: 'address', title: '地址'},
                     {field: 'city', title: '城市'},
                     {field: 'status', title: '州'},
                     {field: 'zipcode', title: '邮编'}

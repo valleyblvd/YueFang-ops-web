@@ -2,14 +2,10 @@ html, body {
     height: 100%;
 }
 
+body {
+    display: none;
+}
+
 .imgList div {
     float: left;
-}
-
-fieldset {
-    margin: 20px 0;
-}
-
-td, th {
-    padding: 5px;
 }

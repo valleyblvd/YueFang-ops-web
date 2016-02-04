@@ -99,6 +99,11 @@ class Property extends Model
         $emptyViewModel->Address = '';
         $emptyViewModel->PostalCode = '';
         $emptyViewModel->Location = '';
+        $emptyViewModel->Area = '';
+        $emptyViewModel->CrossStreets = '';
+        $emptyViewModel->YearBuilt = '';
+        $emptyViewModel->MLSNumber = '';
+        $emptyViewModel->ParkingSpaces = '';
         return $emptyViewModel;
     }
 }
