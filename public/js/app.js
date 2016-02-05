@@ -1,7 +1,5 @@
 (function () {
     $.ajaxSetup({
-        error: function (response) {
-        }
     });
 
     $('form.hasFormatField').submit(function () {
@@ -12,7 +10,7 @@
     uploadResForm.ajaxForm(function (data) {
         var format = uploadResForm.data('format');
         $('.imgList.' + format + ' .clearfix').before('<div class="imgWrapper">' +
-            '<img src="' + data.url + '" style="height:150px;" />' +
+            '<img src="' + data.url + '" style="height:80px;" />' +
             '<input type="hidden" name="' + format + '[]" value="' + data.relativePath + '" /><br>' +
             '<a href="javascript:;" onclick="deleteImg(this)">删除</a>' +
             '</div>');

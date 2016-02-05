@@ -9,7 +9,7 @@
                 @if(strcasecmp($resource->format,$format['id'])==0)
                     @foreach($resource->imgs as $img)
                         <div class="imgWrapper">
-                            <img src="{{$img->src}}" style="height:150px;"/>
+                            <img src="{{$img->src}}" style="height:80px;"/>
                             <input type="hidden" name="{{$format['id'].'[]'}}"
                                    value="{{$img->relativePath}}"/><br>
                             <a href="javascript:;" onclick="deleteImg(this)">删除</a>

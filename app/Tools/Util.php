@@ -4,6 +4,7 @@ namespace App\Tools;
 
 use App\Exceptions\FunFangException;
 use App\Models\Property;
+use App\Models\PropertyCustomize;
 use Exception;
 use GuzzleHttp;
 use Illuminate\Support\Facades\DB;
@@ -63,12 +64,21 @@ class Util
                 if (!in_array($dataValue, $specTypes)) {
                     throw new FunFangException('暂不采集该类型的房源！');
                 }
-                $record->PropertyType = $dataValue;
+                $propertyTypeEnum = Util::getPropertyTypeEnum($dataValue);
+                if ($propertyTypeEnum) {
+                    $record->PropertyType = $propertyTypeEnum['name'];
+                    $record->PropertyTypeEnum = $propertyTypeEnum['value'];
+                }
             } else if (StringUtil::equalsIgnoreCase('Lot Size', $dataType)) {//土地面积
                 $lotSqFt = str_ireplace('AC', '', $dataValue);
                 $lotSqFt = str_replace(' ', '', $lotSqFt);
                 $lotSqFt = $lotSqFt * 43560;
                 $record->LotSqFt = $lotSqFt;
+            } else if (StringUtil::equalsIgnoreCase('Building Size', $dataType)) {//建筑面积
+                $structureSqFt = str_ireplace('SF', '', $dataValue);
+                $structureSqFt = str_ireplace(' ', '', $structureSqFt);
+                $structureSqFt = str_ireplace(',', '', $structureSqFt);
+                $record->StructureSqFt = $structureSqFt;
             }
         }
         $addressStr = $html->find('.basic-info', 0)->find('h1', 0)->plaintext;
@@ -91,7 +101,7 @@ class Util
         $photos = $html->find('.carousel-wrapper', 0)->find('.carousel-inner', 0)->find('img');//照片
         $photoUrls = [];
         foreach ($photos as $photo) {
-            if($photo->src)
+            if ($photo->src)
                 array_push($photoUrls, $photo->src);
             else
                 array_push($photoUrls, $photo->getAttribute('lazy-src'));
@@ -99,7 +109,8 @@ class Util
         $record->PhotoUrls = implode(',', $photoUrls);
         $record->save();
         $html->clear();
-        return $record;
+        $newRecord = Property::find($record->Id);
+        return $newRecord;
     }
 
     public static function parseNewhomesourceProperty($url)
@@ -201,5 +212,22 @@ class Util
         $record->save();
         $html->clear();
         return $record;
+    }
+
+    public static function getPropertyTypeEnum($propertyType)
+    {
+        //'Multifamily', 'Office', 'Industrial', 'Land', 'Residential Income'
+        switch ($propertyType) {
+            case 'Multifamily':
+                return ['name' => 'multi-family', 'value' => 4, 'display' => '多户'];
+            case 'Office':
+                return ['name' => 'Office', 'value' => 12, 'display' => '办公室'];
+            case 'Industrial':
+                return ['name' => 'multi-family', 'value' => 13, 'display' => '工业'];
+            case 'Land':
+                return ['name' => 'land', 'value' => 11, 'display' => '土地'];
+            case 'Residential Income':
+                return ['name' => 'Residential Income', 'value' => 14, 'display' => '居民'];
+        }
     }
 }
