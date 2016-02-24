@@ -11,7 +11,13 @@ use Illuminate\Support\Facades\DB;
 
 class Util
 {
-
+    /**
+     * loopnet.com需要美国ip才能访问，所以使用代理服务器
+     * 免费代理：http://www.xicidaili.com/wt/
+     * @param $url
+     * @return mixed
+     * @throws FunFangException
+     */
     public static function parseLoopnetProperty($url)
     {
         if (!$url)
@@ -22,7 +28,8 @@ class Util
         $httpClient = new GuzzleHttp\Client();
         try {
             $content = $httpClient->get($url, [
-                //'proxy' => 'tcp://qinhaoranwd:qqqqq11111@58.222.254.11:80'
+                'proxy' => 'tcp://108.61.218.68:8888',
+                'timeout'=> 30
             ])->getBody()->getContents();
         } catch (GuzzleHttp\Exception\RequestException $e) {
             throw new FunFangException("访问 $url 时出错！" . $e->getMessage());
