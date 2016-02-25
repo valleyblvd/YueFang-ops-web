@@ -35,13 +35,20 @@
                         $.messager.alert(' ', '请选择您要删除的记录！');
                         return;
                     }
+                    console.log(selected);
                     $.messager.confirm(' ', '您确定要删除该记录吗？', function (r) {
                         if (r) {
-                            $.get('api/properties/customize/delete/' + selected.id, function () {
+                            $.get('/api/properties/customize/delete/' + selected.id, function () {
                                 $.messager.show({
                                     title: ' ',
-                                    msg: '删除成功！'
+                                    msg: '删除成功！',
+                                    style:{
+                                        right:'',
+                                        top:document.body.scrollTop+document.documentElement.scrollTop,
+                                        bottom:''
+                                    }
                                 });
+                                $('#dg').datagrid('reload');
                             }).fail(function (e) {
                                 $.messager.alert(' ', '删除失败！' + e.responseJSON.message, 'error');
                             });
