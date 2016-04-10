@@ -15,33 +15,33 @@ class Property extends Model
     //http://stackoverflow.com/questions/22360969/laravel-model-with-point-polygon-etc-using-dbraw-expressions
     //https://www.codetutorial.io/geo-spatial-mysql-laravel-5/
     /*开始Geometry的处理*/
-    protected $geometryFields = ['Location'];
-    protected $geometryAsText = true;
-
-    public function setLocationAttribute($value)
-    {
-        $this->attributes['Location'] = DB::raw("POINT($value)");
-    }
-
-    public function getLocationAttribute($value)
-    {
-        $loc = substr($value, 6);
-        $loc = preg_replace('/[ ,]+/', ',', $loc, 1);
-        return substr($loc, 0, -1);
-    }
-
-    public function newQuery($excludeDeleted = true)
-    {
-        if (!empty($this->geometryFields) && $this->geometryAsText === true) {
-            $raw = '';
-            foreach ($this->geometryFields as $column) {
-                $raw .= 'AsText(`' . $this->table . '`.`' . $column . '`) as `' . $column . '`, ';
-            }
-            $raw = substr($raw, 0, -2);
-            return parent::newQuery($excludeDeleted)->addSelect('*', DB::raw($raw));
-        }
-        return parent::newQuery($excludeDeleted);
-    }
+//    protected $geometryFields = ['Location'];
+//    protected $geometryAsText = true;
+//
+//    public function setLocationAttribute($value)
+//    {
+//        $this->attributes['Location'] = DB::raw("POINT($value)");
+//    }
+//
+//    public function getLocationAttribute($value)
+//    {
+//        $loc = substr($value, 6);
+//        $loc = preg_replace('/[ ,]+/', ',', $loc, 1);
+//        return substr($loc, 0, -1);
+//    }
+//
+//    public function newQuery($excludeDeleted = true)
+//    {
+//        if (!empty($this->geometryFields) && $this->geometryAsText === true) {
+//            $raw = '';
+//            foreach ($this->geometryFields as $column) {
+//                $raw .= 'AsText(`' . $this->table . '`.`' . $column . '`) as `' . $column . '`, ';
+//            }
+//            $raw = substr($raw, 0, -2);
+//            return parent::newQuery($excludeDeleted)->addSelect('*', DB::raw($raw));
+//        }
+//        return parent::newQuery($excludeDeleted);
+//    }
 
     /*结束Geometry的处理*/
 
